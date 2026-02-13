@@ -243,6 +243,32 @@ def load_features(
     """
 ```
 
+### Conventional Commits (Español)
+
+Los mensajes de commit deben ser en español y seguir este formato:
+
+```
+<tipo>: <descripción>
+```
+
+**Tipos de commit:**
+- `Agrega`: Nuevas funcionalidades o archivos
+- `Arregla`: Corrección de bugs
+- `Organiza`: Refactorización o mejora de código
+- `Actualiza`: Actualización de dependencias o documentación
+- `Elimina`: Eliminación de código o archivos
+
+**Ejemplos:**
+```
+Agrega modelo X-Vector para clasificación de audio
+Arregla error en dimensionamiento de tensores
+Organiza estructura de archivos del proyecto
+Actualiza AGENTS.md con reglas de commits
+Elimina archivos temporales de caché
+```
+
+---
+
 ### Git Ignore
 
 Ensure sensitive files are ignored:
