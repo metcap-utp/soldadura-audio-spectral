@@ -1,0 +1,3 @@
+audio_root: /home/luis/projects/tesis/audio/soldadura/audio
+cache_dir: .cache_features
+sample_rate: 16000
