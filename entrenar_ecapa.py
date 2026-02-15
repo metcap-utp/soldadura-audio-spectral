@@ -60,9 +60,10 @@ def ensure_csvs_exist(duration, overlap, seed):
     """Genera CSVs si no existen usando generar_splits.py."""
     duration_dir = Path(f"{duration:02d}seg")
     
+    # Intentar con nombres específicos de overlap
     train_csv = duration_dir / f"train_overlap_{overlap}.csv"
-    
-    
+    test_csv = duration_dir / f"test_overlap_{overlap}.csv"
+    blind_csv = duration_dir / f"blind_overlap_{overlap}.csv"
     
     # Si no existen, usar nombres genéricos
     if not train_csv.exists():
@@ -71,8 +72,6 @@ def ensure_csvs_exist(duration, overlap, seed):
         test_csv = duration_dir / "test.csv"
     if not blind_csv.exists():
         blind_csv = duration_dir / "blind.csv"
-    
-    
     
     if not train_csv.exists() or not test_csv.exists() or not blind_csv.exists():
         print(f"CSVs no encontrados. Generando con generar_splits.py...")

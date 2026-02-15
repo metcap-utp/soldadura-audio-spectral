@@ -30,19 +30,11 @@ sys.path.insert(0, str(ROOT_DIR))
 from utils.audio_utils import AUDIO_BASE_DIR, get_audio_files
 
 
-# =============================================================================
-# Configuración
-# =============================================================================
-
 RANDOM_SEED = 42
 BLIND_FRACTION = 0.10  # 10% para evaluación ciega
 TEST_FRACTION = 0.18   # 18% para test
 TRAIN_FRACTION = 0.72  # 72% para entrenamiento
 
-
-# =============================================================================
-# Parseo de argumentos
-# =============================================================================
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -69,10 +61,6 @@ def parse_args():
     )
     return parser.parse_args()
 
-
-# =============================================================================
-# Funciones
-# =============================================================================
 
 def create_session_based_split(audio_files: list, seed: int = RANDOM_SEED):
     """
@@ -173,10 +161,6 @@ def compute_data_stats(df: pd.DataFrame):
     }
     return stats
 
-
-# =============================================================================
-# Main
-# =============================================================================
 
 def main():
     args = parse_args()
