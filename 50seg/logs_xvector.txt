@@ -1,0 +1,66 @@
+============================================================
+ENTRENAMIENTO X-VECTOR SMAW (Multi-Task)
+============================================================
+Duración: 50s
+Overlap: 0.5
+K-folds: 10
+Seed: 42
+Device: cuda
+============================================================
+
+Verificando CSVs...
+CSVs no encontrados. Generando con generar_splits.py...
+  Duración: 50s, Overlap: 0.5, Seed: 42
+  CSVs generados exitosamente
+
+Cargando features desde CSVs...
+Cargando CSVs...
+  Train: 325 segmentos
+  Test: 72 segmentos
+  Blind: 51 segmentos
+
+Extrayendo MFCC de train...
+    Procesados 100/325 segmentos...
+    Procesados 200/325 segmentos...
+    Procesados 300/325 segmentos...
+Extrayendo MFCC de test...
+Extrayendo MFCC de blind...
+
+  [CACHE] Features guardadas en 50seg/mfcc_cache/features_xvector_overlap_0.5.pt
+
+Total samples: 397
+Clases: Plate=3, Electrode=4, Current=2
+
+============================================================
+K-FOLD CROSS-VALIDATION
+============================================================
+
+Fold 1/10
+Traceback (most recent call last):
+  File "/home/luis/projects/tesis/audio/spectral-analysis/entrenar_xvector.py", line 509, in <module>
+    main()
+  File "/home/luis/projects/tesis/audio/spectral-analysis/entrenar_xvector.py", line 447, in main
+    model, swa_model, metrics = train_model(model, train_loader, val_loader, device)
+  File "/home/luis/projects/tesis/audio/spectral-analysis/entrenar_xvector.py", line 240, in train_model
+    out = model(x)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/luis/projects/tesis/audio/spectral-analysis/weld_audio_classifier/models/xvector.py", line 99, in forward
+    x = self.frame1(x)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/luis/projects/tesis/audio/spectral-analysis/weld_audio_classifier/models/xvector.py", line 27, in forward
+    x = self.conv(x)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 371, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/home/luis/.local/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 366, in _conv_forward
+    return F.conv1d(
+RuntimeError: Calculated padded input size per channel: (1). Kernel size: (5). Kernel size can't be greater than actual input size

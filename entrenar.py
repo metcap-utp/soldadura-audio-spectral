@@ -78,7 +78,7 @@ def extract_features(audio_files, duration, overlap, cache_path):
     """Extrae MFCC de todos los audios."""
     if not args.no_cache and cache_path.exists():
         print(f"  [CACHE] Cargando features desde {cache_path}")
-        data = torch.load(cache_path)
+        data = torch.load(cache_path, weights_only=False)
         return data['features'], data['labels_plate'], data['labels_electrode'], data['labels_current'], data['sessions']
     
     features, labels_plate, labels_electrode, labels_current, sessions = [], [], [], [], []

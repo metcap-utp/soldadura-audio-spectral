@@ -151,7 +151,7 @@ def extract_features_from_csv(train_csv, test_csv, blind_csv, duration, overlap,
     """Extrae features de los CSVs."""
     if cache_path.exists():
         print(f"  [CACHE] Cargando features desde {cache_path}")
-        data = torch.load(cache_path)
+        data = torch.load(cache_path, weights_only=False)
         return (data['X_train'], data['y_train'], data['sessions_train'],
                 data['X_test'], data['y_test'], data['sessions_test'],
                 data['X_blind'], data['y_blind'], data['sessions_blind'])

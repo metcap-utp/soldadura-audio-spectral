@@ -1,0 +1,65 @@
+{
+  "segment_duration": 50,
+  "overlap_ratio": 0.5,
+  "random_seed": 42,
+  "train": {
+    "total_samples": 325,
+    "unique_sessions": 268,
+    "unique_audio_files": 268,
+    "plate_distribution": {
+      "Placa_6mm": 112,
+      "Placa_3mm": 108,
+      "Placa_12mm": 105
+    },
+    "electrode_distribution": {
+      "E6011": 121,
+      "E6013": 97,
+      "E7018": 61,
+      "E6010": 46
+    },
+    "current_distribution": {
+      "DC": 204,
+      "AC": 121
+    }
+  },
+  "test": {
+    "total_samples": 72,
+    "unique_sessions": 67,
+    "unique_audio_files": 67,
+    "plate_distribution": {
+      "Placa_6mm": 27,
+      "Placa_3mm": 26,
+      "Placa_12mm": 19
+    },
+    "electrode_distribution": {
+      "E6011": 29,
+      "E6013": 22,
+      "E7018": 11,
+      "E6010": 10
+    },
+    "current_distribution": {
+      "DC": 46,
+      "AC": 26
+    }
+  },
+  "blind": {
+    "total_samples": 51,
+    "unique_sessions": 38,
+    "unique_audio_files": 38,
+    "plate_distribution": {
+      "Placa_12mm": 22,
+      "Placa_3mm": 19,
+      "Placa_6mm": 10
+    },
+    "electrode_distribution": {
+      "E6011": 21,
+      "E6013": 13,
+      "E7018": 12,
+      "E6010": 5
+    },
+    "current_distribution": {
+      "AC": 27,
+      "DC": 24
+    }
+  }
+}

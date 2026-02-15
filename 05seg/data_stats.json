@@ -1,0 +1,65 @@
+{
+  "segment_duration": 5,
+  "overlap_ratio": 0.5,
+  "random_seed": 42,
+  "train": {
+    "total_samples": 5861,
+    "unique_sessions": 268,
+    "unique_audio_files": 268,
+    "plate_distribution": {
+      "Placa_6mm": 1999,
+      "Placa_3mm": 1934,
+      "Placa_12mm": 1928
+    },
+    "electrode_distribution": {
+      "E6011": 2189,
+      "E6013": 1751,
+      "E7018": 1006,
+      "E6010": 915
+    },
+    "current_distribution": {
+      "DC": 3619,
+      "AC": 2242
+    }
+  },
+  "test": {
+    "total_samples": 1413,
+    "unique_sessions": 67,
+    "unique_audio_files": 67,
+    "plate_distribution": {
+      "Placa_6mm": 557,
+      "Placa_3mm": 486,
+      "Placa_12mm": 370
+    },
+    "electrode_distribution": {
+      "E6011": 614,
+      "E6013": 427,
+      "E6010": 204,
+      "E7018": 168
+    },
+    "current_distribution": {
+      "DC": 856,
+      "AC": 557
+    }
+  },
+  "blind": {
+    "total_samples": 911,
+    "unique_sessions": 38,
+    "unique_audio_files": 38,
+    "plate_distribution": {
+      "Placa_12mm": 411,
+      "Placa_3mm": 327,
+      "Placa_6mm": 173
+    },
+    "electrode_distribution": {
+      "E6011": 390,
+      "E6013": 218,
+      "E7018": 189,
+      "E6010": 114
+    },
+    "current_distribution": {
+      "AC": 479,
+      "DC": 432
+    }
+  }
+}

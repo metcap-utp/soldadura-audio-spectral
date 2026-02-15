@@ -1,0 +1,19 @@
+============================================================
+ENTRENAMIENTO ECAPA-TDNN SMAW (Multi-Task)
+============================================================
+Duración: 2s
+Overlap: 0.5
+K-folds: 10
+Seed: 42
+Device: cuda
+============================================================
+
+Verificando CSVs...
+Traceback (most recent call last):
+  File "/home/luis/projects/tesis/audio/spectral-analysis/entrenar_ecapa.py", line 561, in <module>
+    main()
+  File "/home/luis/projects/tesis/audio/spectral-analysis/entrenar_ecapa.py", line 434, in main
+    train_csv, test_csv, blind_csv = ensure_csvs_exist(args.duration, args.overlap, args.seed)
+  File "/home/luis/projects/tesis/audio/spectral-analysis/entrenar_ecapa.py", line 70, in ensure_csvs_exist
+    if not test_csv.exists():
+UnboundLocalError: local variable 'test_csv' referenced before assignment

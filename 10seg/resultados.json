@@ -1,0 +1,136 @@
+[
+  {
+    "timestamp": "2026-02-14T20:24:22.778691",
+    "config": {
+      "n_folds": 10,
+      "random_seed": 42,
+      "segment_duration": 10,
+      "overlap_ratio": 0.5,
+      "batch_size": 32,
+      "epochs": 100,
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "label_smoothing": 0.1,
+      "early_stop_patience": 15,
+      "swa_start": 5
+    },
+    "fold_results": [
+      {
+        "fold": 0,
+        "time_seconds": 17.823806047439575,
+        "acc_plate": 0.2635294117647059,
+        "acc_electrode": 0.12,
+        "acc_current": 0.4211764705882353,
+        "f1_plate": 0.13904407200496585,
+        "f1_electrode": 0.05357142857142857,
+        "f1_current": 0.29635761589403975
+      },
+      {
+        "fold": 1,
+        "time_seconds": 17.75301504135132,
+        "acc_plate": 0.3258426966292135,
+        "acc_electrode": 0.1348314606741573,
+        "acc_current": 0.44662921348314605,
+        "f1_plate": 0.16384180790960454,
+        "f1_electrode": 0.0594059405940594,
+        "f1_current": 0.3087378640776699
+      },
+      {
+        "fold": 2,
+        "time_seconds": 18.33201313018799,
+        "acc_plate": 0.3589108910891089,
+        "acc_electrode": 0.16336633663366337,
+        "acc_current": 0.3341584158415842,
+        "f1_plate": 0.1760777170613236,
+        "f1_electrode": 0.07021276595744681,
+        "f1_current": 0.2504638218923933
+      },
+      {
+        "fold": 3,
+        "time_seconds": 16.263179540634155,
+        "acc_plate": 0.34759358288770054,
+        "acc_electrode": 0.1925133689839572,
+        "acc_current": 0.339572192513369,
+        "f1_plate": 0.17195767195767198,
+        "f1_electrode": 0.08071748878923767,
+        "f1_current": 0.25349301397205587
+      },
+      {
+        "fold": 4,
+        "time_seconds": 16.432286977767944,
+        "acc_plate": 0.2682291666666667,
+        "acc_electrode": 0.1640625,
+        "acc_current": 0.4375,
+        "f1_plate": 0.14099931553730322,
+        "f1_electrode": 0.07046979865771812,
+        "f1_current": 0.30434782608695654
+      },
+      {
+        "fold": 5,
+        "time_seconds": 16.50308918952942,
+        "acc_plate": 0.37275064267352187,
+        "acc_electrode": 0.2519280205655527,
+        "acc_current": 0.32390745501285345,
+        "f1_plate": 0.18102372034956304,
+        "f1_electrode": 0.10061601642710473,
+        "f1_current": 0.2446601941747573
+      },
+      {
+        "fold": 6,
+        "time_seconds": 19.087880849838257,
+        "acc_plate": 0.25205479452054796,
+        "acc_electrode": 0.10684931506849316,
+        "acc_current": 0.4191780821917808,
+        "f1_plate": 0.13420860685630928,
+        "f1_electrode": 0.04826732673267327,
+        "f1_current": 0.2953667953667954
+      },
+      {
+        "fold": 7,
+        "time_seconds": 19.735543489456177,
+        "acc_plate": 0.45077720207253885,
+        "acc_electrode": 0.20466321243523317,
+        "acc_current": 0.4326424870466321,
+        "f1_plate": 0.20714285714285716,
+        "f1_electrode": 0.08494623655913978,
+        "f1_current": 0.30198915009041594
+      },
+      {
+        "fold": 8,
+        "time_seconds": 28.09964609146118,
+        "acc_plate": 0.3190348525469169,
+        "acc_electrode": 0.05093833780160858,
+        "acc_current": 0.49865951742627346,
+        "f1_plate": 0.16124661246612468,
+        "f1_electrode": 0.02423469387755102,
+        "f1_current": 0.33273703041144903
+      },
+      {
+        "fold": 9,
+        "time_seconds": 23.260346174240112,
+        "acc_plate": 0.3557422969187675,
+        "acc_electrode": 0.11204481792717087,
+        "acc_current": 0.4173669467787115,
+        "f1_plate": 0.17493112947658404,
+        "f1_electrode": 0.05037783375314862,
+        "f1_current": 0.29446640316205536
+      }
+    ],
+    "average_metrics": {
+      "mean_time_seconds": 19.329080653190612,
+      "std_time_seconds": 3.5231012640283077,
+      "mean_acc_plate": 0.33144655377696886,
+      "std_acc_plate": 0.057139139022634185,
+      "mean_acc_electrode": 0.15011973700898365,
+      "std_acc_electrode": 0.05459571335122026,
+      "mean_acc_current": 0.4070790780882586,
+      "std_acc_current": 0.053640651125737265,
+      "mean_f1_plate": 0.16504735107623075,
+      "std_f1_plate": 0.02125039345327615,
+      "mean_f1_electrode": 0.0642819529919508,
+      "std_f1_electrode": 0.020695009478828408,
+      "mean_f1_current": 0.2882619715128588,
+      "std_f1_current": 0.027454856859426755
+    }
+  }
+]
