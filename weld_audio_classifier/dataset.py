@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-from mfcc_baseline.features import extract_mfcc_features
-from mfcc_baseline.segmenter import load_audio_segment
+from weld_audio_classifier.features import extract_mfcc_features
+from weld_audio_classifier.segmenter import load_audio_segment
 
 
 @dataclass

@@ -4,89 +4,220 @@ This file provides guidelines for agents working on this codebase.
 
 ## Project Overview
 
-Audio spectral analysis project for weld sound classification using MFCC features and deep learning models (X-Vector, ECAPA-TDNN).
+Audio spectral analysis project for weld sound classification using MFCC features and deep learning models (X-Vector, ECAPA-TDNN, FeedForward).
+
+**Este proyecto está adaptado para comparación con vggish-backbone** - usa los mismos hiperparámetros, estructura de archivos y scripts de visualización.
 
 ## Project Structure
 
 ```
 spectral-analysis/
-├── mfcc_baseline/
-│   ├── models/           # X-Vector and ECAPA-TDNN PyTorch models
-│   ├── features.py       # MFCC feature extraction
-│   ├── segmenter.py      # Audio segmentation
-│   ├── dataset.py        # Data loading utilities
-│   ├── train.py          # Classic ML training (SVM, RF)
-│   └── pytorch_dataset.py
-├── scripts/
-│   ├── train_pytorch.py  # PyTorch training script with k-fold CV
-│   └── generate_splits.py
-├── config.yaml           # Configuration file
-├── requisitos.txt        # Python dependencies
-└── ejemplos.md          # Usage examples
+├── entrenar.py              # Script principal de entrenamiento (adaptado de vggish)
+├── inferir.py               # Inferencia y evaluación con ensemble voting
+├── generar_splits.py        # Generación de splits estratificados
+├── modelo.py                # Arquitectura X-Vector multi-task
+├── entrenar_todos.sh        # Script batch para entrenar todas las combinaciones
+├── evaluar_todos.sh         # Script batch para evaluar todos los modelos
+│
+├── {N}seg/                  # Directorios por duración: 01seg, 02seg, 05seg, etc.
+│   ├── train.csv / test.csv / blind.csv
+│   ├── train_overlap_{X}.csv         # Variantes con diferentes overlaps
+│   ├── resultados.json               # Métricas de entrenamiento (acumulativo)
+│   ├── inferencia.json               # Métricas de evaluación ciega
+│   ├── data_stats.json               # Estadísticas de datos
+│   ├── mfcc_cache/                   # Cache de features MFCC
+│   ├── modelos/                      # Modelos entrenados
+│   │   └── k{K:02d}_overlap_{ratio}/
+│   │       ├── model_fold_{n}.pt
+│   │       ├── model_fold_{n}_swa.pt
+│   │       └── config.json
+│   ├── matrices_confusion/           # Matrices de confusión generadas
+│   └── graficas/                     # Figuras generadas
+│
+├── scripts/                 # Scripts de análisis y visualización
+│   ├── graficar_folds.py    # Métricas vs K-folds
+│   ├── graficar_duraciones.py  # Métricas vs duración
+│   ├── graficar_overlap.py     # Comparación de overlaps
+│   └── generar_confusion_matrices.py
+│
+├── utils/                   # Utilidades
+│   ├── audio_utils.py       # Carga de audio y segmentación
+│   └── timing.py            # Utilidades de timing
+│
+├── weld_audio_classifier/   # Paquete principal
+│   ├── models/
+│   │   ├── xvector.py       # X-Vector multi-task
+│   │   ├── ecapa_tdnn.py    # ECAPA-TDNN
+│   │   └── feedforward.py   # FeedForward
+│   ├── features.py          # MFCC extraction con caching
+│   └── ...
+│
+├── config.yaml              # Configuration file
+├── requirements.txt         # Python dependencies
+└── README.md
 ```
+
+---
+
+## Hiperparámetros (de vggish-backbone)
+
+Los siguientes hiperparámetros son idénticos a los usados en vggish-backbone para permitir comparación justa:
+
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `BATCH_SIZE` | 32 | Tamaño del batch |
+| `NUM_EPOCHS` | 100 | Número máximo de épocas |
+| `EARLY_STOP_PATIENCE` | 15 | Paciencia para early stopping |
+| `LEARNING_RATE` | 1e-3 | Learning rate inicial |
+| `WEIGHT_DECAY` | 1e-4 | Decay L2 |
+| `LABEL_SMOOTHING` | 0.1 | Smoothing para CrossEntropy |
+| `SWA_START` | 5 | Época de inicio de SWA |
+| `N_MFCC` | 40 | Número de coeficientes MFCC |
+
+**Optimizador:** AdamW  
+**Schedulers:**
+- `CosineAnnealingWarmRestarts(T_0=10, T_mult=2, eta_min=1e-6)`
+- `SWALR(swa_lr=1e-4)` desde epoch 5
+
+**Pérdida Multi-Task:** Con incertidumbre aprendida (`log_vars`)
 
 ---
 
 ## Build/Lint/Test Commands
 
-### Running the Project
+### Ejecución del Proyecto
 
 ```bash
-# Set Python path
-export PYTHONPATH=.
+# Generar splits para una duración específica
+python generar_splits.py --duration 10 --overlap 0.5
 
-# Or run with inline path
-PYTHONPATH=. python scripts/train_pytorch.py --help
+# Entrenar modelo
+python entrenar.py --duration 10 --overlap 0.5 --k-folds 5
+
+# Evaluar en conjunto blind
+python inferir.py --duration 10 --overlap 0.5 --k-folds 5 --evaluar
+
+# Predicción de archivo individual
+python inferir.py --duration 10 --overlap 0.5 --k-folds 5 --audio ruta/al/audio.wav
 ```
 
-### Training Examples
+### Scripts de Visualización
 
 ```bash
-# X-Vector with 5-fold cross-validation
-PYTHONPATH=. python scripts/train_pytorch.py \
-  --splits-dir splits \
-  --output-dir outputs \
-  --duration 10 \
-  --k-fold 5 \
-  --overlap 0.0 \
-  --model-type xvector \
-  --task "Plate Thickness"
+# Métricas vs K-folds
+python scripts/graficar_folds.py 10seg --save
 
-# ECAPA-TDNN
-PYTHONPATH=. python scripts/train_pytorch.py \
-  --splits-dir splits \
-  --output-dir outputs \
-  --duration 10 \
-  --k-fold 5 \
-  --model-type ecapa \
-  --embedding-dim 192
+# Métricas vs duración (comparar diferentes duraciones)
+python scripts/graficar_duraciones.py --save
+
+# Comparación de overlaps
+python scripts/graficar_overlap.py --save --heatmap
 ```
 
-### Testing Models
+### Scripts de Automatización
 
 ```bash
-# Test model imports and shapes
-PYTHONPATH=. python -c "
-from mfcc_baseline.models import XVectorModel, ECAPA_TDNN
-import torch
+# Entrenar todas las combinaciones
+./entrenar_todos.sh
 
-xvec = XVectorModel(input_size=40, embedding_size=512)
-x = torch.randn(2, 40, 100)
-out = xvec(x)
-print(f'X-Vector: {out.shape}')
-
-ecapa = ECAPA_TDNN(input_size=40, lin_neurons=192)
-out = ecapa(x)
-print(f'ECAPA: {out.shape}')
-"
+# Evaluar todos los modelos entrenados
+./evaluar_todos.sh
 ```
 
-### Linting
+---
 
-No formal linter is configured. Manual code review is recommended. Key files to check:
-- Type hints consistency
-- Import organization
-- Code formatting
+## Estructura de Directorios
+
+### Features Cache
+```
+{N}seg/
+└── mfcc_cache/
+    └── mfcc_features_{duration}s_overlap_{ratio}.pkl
+```
+
+### Modelos Entrenados
+```
+{N}seg/
+└── modelos/
+    └── k{K:02d}_overlap_{ratio}/
+        ├── model_fold_0.pt
+        ├── model_fold_0_swa.pt
+        ├── model_fold_1.pt
+        ├── model_fold_1_swa.pt
+        └── ...
+```
+
+### Resultados JSON
+
+**`resultados.json`** (acumulativo):
+```json
+[
+  {
+    "timestamp": "2025-12-25T03:40:39.787190",
+    "config": {
+      "n_folds": 5,
+      "random_seed": 42,
+      "batch_size": 32,
+      "epochs": 100,
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "label_smoothing": 0.1,
+      "overlap_ratio": 0.5
+    },
+    "fold_results": [
+      {
+        "fold": 0,
+        "acc_plate": 0.7593,
+        "acc_electrode": 0.8293,
+        "acc_current": 0.9519,
+        "f1_plate": 0.7595,
+        "f1_electrode": 0.8295,
+        "f1_current": 0.9519
+      }
+    ],
+    "ensemble_results": {
+      "plate": {"accuracy": 0.9899, "f1": 0.9899, "precision": 0.9899, "recall": 0.9899},
+      "electrode": {...},
+      "current": {...}
+    },
+    "improvement_vs_individual": {
+      "plate": 0.1949,
+      "electrode": 0.1358,
+      "current": 0.0355
+    },
+    "global_metrics": {
+      "exact_match_accuracy": 0.7204,
+      "hamming_accuracy": 0.8620,
+      "exact_match_improvement_vs_avg": 0.0862
+    }
+  }
+]
+```
+
+**`inferencia.json`** (evaluación blind):
+```json
+[
+  {
+    "mode": "blind_evaluation",
+    "segment_duration": 10.0,
+    "n_samples": 447,
+    "n_models": 5,
+    "voting_method": "soft",
+    "accuracy": {
+      "plate_thickness": 0.7539,
+      "electrode": 0.8613,
+      "current_type": 0.9709
+    },
+    "macro_f1": {
+      "plate_thickness": 0.7601,
+      "electrode": 0.8525,
+      "current_type": 0.9687
+    },
+    "confusion_matrices": {...},
+    "global_metrics": {...}
+  }
+]
+```
 
 ---
 
@@ -111,9 +242,9 @@ import torch.nn.functional as F
 from sklearn.metrics import accuracy_score
 
 # 3. Local
-from mfcc_baseline.config import load_config
-from mfcc_baseline.dataset import FeatureConfig
-from mfcc_baseline.models import XVectorModel
+from weld_audio_classifier.config import load_config
+from weld_audio_classifier.dataset import FeatureConfig
+from weld_audio_classifier.models import XVectorModel
 ```
 
 ### Type Hints
@@ -180,7 +311,7 @@ if not audio_path.exists():
 
 ### PyTorch Conventions
 
-1. **Model forward pass**: Accept raw tensor, return logits or embeddings
+1. **Model forward pass**: Accept raw tensor, return logits o embeddings
 2. **Device handling**: Always move data to device with `.to(device)`
 3. **Loss computation**: Use `loss.detach().cpu().item()` for logging
 4. **Evaluation**: Use `torch.no_grad()` context
@@ -200,50 +331,45 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
         optimizer.step()
 ```
 
-### Configuration
+### Configuración
 
-Store configurable paths as constants at the top of files:
-
-```python
-# ============================================================
-# RUTA DE AUDIOS - Cambiar aquí la ruta de los archivos de audio
-# ============================================================
-DEFAULT_AUDIO_ROOT = Path("/home/luis/projects/tesis/audio/soldadura/audio")
-```
-
-### Documentation
-
-- Use docstrings for public functions and classes
-- Keep docstrings concise but informative
-- Include parameter types and return values
+Ruta de audio configurable en `utils/audio_utils.py`:
 
 ```python
-def load_features(
-    csv_path: Path,
-    audio_root: Path,
-    segment_duration: float,
-    overlap_ratio: float,
-    sample_rate: int,
-    feature_cfg: FeatureConfig,
-    cache_dir: Path,
-) -> Tuple[np.ndarray, pd.DataFrame]:
-    """Load and extract MFCC features from audio segments.
-    
-    Args:
-        csv_path: Path to CSV with audio file paths and labels
-        audio_root: Root directory containing audio files
-        segment_duration: Duration of each audio segment in seconds
-        overlap_ratio: Overlap ratio between segments (0.0-1.0)
-        sample_rate: Audio sample rate
-        feature_cfg: Feature extraction configuration
-        cache_dir: Directory for caching extracted features
-    
-    Returns:
-        Tuple of (features array, dataframe with labels)
-    """
+AUDIO_BASE_DIR = Path("/home/luis/projects/tesis/audio/vggish-backbone/audio")
 ```
 
-### Conventional Commits (Español)
+### Estilo de Gráficas (Científico)
+
+```python
+import matplotlib.pyplot as plt
+
+plt.rcParams.update({
+    'font.size': 11,
+    'axes.labelsize': 12,
+    'axes.titlesize': 13,
+    'xtick.labelsize': 10,
+    'ytick.labelsize': 10,
+    'legend.fontsize': 10,
+    'figure.dpi': 300,
+    'savefig.dpi': 300,
+    'axes.grid': True,
+    'grid.alpha': 0.3,
+    'lines.linewidth': 2,
+    'lines.markersize': 8,
+})
+
+# Colores consistentes
+COLORS = {
+    "plate": "#2ecc71",      # Verde
+    "electrode": "#3498db",  # Azul
+    "current": "#e74c3c",    # Rojo
+}
+```
+
+---
+
+## Conventional Commits (Español)
 
 Los mensajes de commit deben ser en español y seguir este formato:
 
@@ -271,9 +397,13 @@ Elimina archivos temporales de caché
 
 ### Git Ignore
 
-Ensure sensitive files are ignored:
-- `.cache_features/` - Feature cache
-- `outputs/` - Model outputs
+Archivos que deben ignorarse:
+- `*/mfcc_cache/` - Cache de features MFCC
+- `*/modelos/` - Modelos entrenados
+- `*/matrices_confusion/` - Matrices de confusión
+- `*/graficas/` - Figuras generadas
+- `resultados.json` - Resultados acumulativos
+- `inferencia.json` - Resultados de inferencia
 - `.pyc__` - Python bytecode
 - `.env` - Environment variables
 
@@ -281,21 +411,29 @@ Ensure sensitive files are ignored:
 
 ## Running Tests
 
-Currently there are no formal tests. To manually test:
-
 ```bash
-# Test model imports
-PYTHONPATH=. python -c "from mfcc_baseline.models import XVectorModel, ECAPA_TDNN"
-
-# Test training script help
-PYTHONPATH=. python scripts/train_pytorch.py --help
-
-# Test data loading
-PYTHONPATH=. python -c "
-from mfcc_baseline.config import load_config
-cfg = load_config()
-print(f'Audio root: {cfg.audio_root}')
+# Test imports de modelos
+python -c "
+from modelo import SMAWXVectorModel
+import torch
+model = SMAWXVectorModel()
+x = torch.randn(2, 240)
+out = model(x)
+print(f'Output keys: {out.keys()}')
 "
+
+# Test extracción de features
+python -c "
+from utils.audio_utils import get_audio_files
+files = get_audio_files()
+print(f'Archivos encontrados: {len(files)}')
+"
+
+# Test generación de splits
+python generar_splits.py --duration 1 --overlap 0.0
+
+# Test entrenamiento (un solo fold para prueba)
+python entrenar.py --duration 1 --overlap 0.0 --k-folds 3
 ```
 
 ---
@@ -304,17 +442,21 @@ print(f'Audio root: {cfg.audio_root}')
 
 | File | Purpose |
 |------|---------|
-| `mfcc_baseline/models/xvector.py` | X-Vector TDNN implementation |
-| `mfcc_baseline/models/ecapa_tdnn.py` | ECAPA-TDNN implementation |
-| `mfcc_baseline/features.py` | MFCC extraction |
-| `scripts/train_pytorch.py` | Main training script |
-| `config.yaml` | Configuration |
+| `entrenar.py` | Script principal de entrenamiento |
+| `inferir.py` | Inferencia y evaluación con ensemble |
+| `generar_splits.py` | Generación de splits estratificados |
+| `modelo.py` | Arquitectura X-Vector multi-task |
+| `weld_audio_classifier/models/xvector.py` | X-Vector implementation |
+| `weld_audio_classifier/features.py` | MFCC extraction con caching |
+| `scripts/graficar_folds.py` | Visualización de métricas vs folds |
+| `utils/audio_utils.py` | Utilidades de audio |
 
 ---
 
 ## Common Issues
 
-1. **Module not found**: Use `PYTHONPATH=.` prefix
-2. **Audio files not found**: Check `DEFAULT_AUDIO_ROOT` in training script
-3. **CUDA out of memory**: Reduce `--batch-size`
-4. **Missing splits**: Run `scripts/generate_splits.py` first
+1. **Module not found**: Asegurarse de estar en el directorio raíz del proyecto
+2. **Audio files not found**: Verificar ruta en `utils/audio_utils.py`
+3. **CUDA out of memory**: Reducir `--batch-size` o usar `--device cpu`
+4. **Missing splits**: Ejecutar `python generar_splits.py --duration X --overlap Y` primero
+5. **Cache inválido**: Usar `--no-cache` para forzar recálculo de features

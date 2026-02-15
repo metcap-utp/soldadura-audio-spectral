@@ -5,8 +5,8 @@ from typing import Dict, Tuple
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from mfcc_baseline.audio_paths import discover_sessions
-from mfcc_baseline.segmenter import get_all_segments_from_session
+from weld_audio_classifier.audio_paths import discover_sessions
+from weld_audio_classifier.segmenter import get_all_segments_from_session
 
 
 @dataclass

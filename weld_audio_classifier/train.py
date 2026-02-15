@@ -8,13 +8,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
-from mfcc_baseline.dataset import (
+from weld_audio_classifier.dataset import (
     FeatureConfig,
     encode_labels,
     fit_label_encoders,
     load_features,
 )
-from mfcc_baseline.metrics import (
+from weld_audio_classifier.metrics import (
     compute_confusion,
     compute_metrics,
     save_confusion_matrix,
