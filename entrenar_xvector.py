@@ -420,14 +420,18 @@ def main():
         ye_tr, ye_val = y_electrode[train_idx], y_electrode[val_idx]
         yc_tr, yc_val = y_current[train_idx], y_current[val_idx]
         
+        # XVector espera entrada 3D (batch, features, time), agregar dimensión temporal
+        X_tr_3d = torch.FloatTensor(X_tr).unsqueeze(2)  # (N, 240, 1)
+        X_val_3d = torch.FloatTensor(X_val).unsqueeze(2)
+        
         train_dataset = TensorDataset(
-            torch.FloatTensor(X_tr),
+            X_tr_3d,
             torch.LongTensor(yp_tr),
             torch.LongTensor(ye_tr),
             torch.LongTensor(yc_tr)
         )
         val_dataset = TensorDataset(
-            torch.FloatTensor(X_val),
+            X_val_3d,
             torch.LongTensor(yp_val),
             torch.LongTensor(ye_val),
             torch.LongTensor(yc_val)

@@ -57,7 +57,11 @@ spectral-analysis/
 └── README.md
 ```
 
-
+- No usar este tipo de anotaciones: 
+<!-- # =============================================================================
+# Main
+# =============================================================================
+--> para separar secciones.
 ---
 
 ## Hiperparámetros (de vggish-backbone)
