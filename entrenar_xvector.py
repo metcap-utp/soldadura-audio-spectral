@@ -27,11 +27,10 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder
 from torch.optim.swa_utils import SWALR, AveragedModel
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, Dataset
 
 sys.path.insert(0, str(Path(__file__).parent))
 from weld_audio_classifier.models import XVectorModel
-from weld_audio_classifier.features import extract_mfcc_features
 from utils.audio_utils import AUDIO_BASE_DIR
 
 warnings.filterwarnings("ignore")
@@ -104,8 +103,14 @@ def ensure_csvs_exist(duration, overlap, seed):
     return train_csv, test_csv, blind_csv
 
 
+def extract_mfcc_raw(y, sr=16000, n_mfcc=40):
+    """Extrae MFCC sin agregar estadísticas (para XVector)."""
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
+    return mfcc  # (n_mfcc, time)
+
+
 def load_segments_from_csv(df, duration, overlap):
-    """Carga segmentos de audio definidos en el CSV."""
+    """Carga segmentos de audio definidos en el CSV (MFCC raw para XVector)."""
     features = []
     failed = 0
     
@@ -119,14 +124,11 @@ def load_segments_from_csv(df, duration, overlap):
         try:
             y, sr = librosa.load(str(audio_path), sr=16000)
             
-            # Calcular posición del segmento
             hop = int(duration * (1 - overlap) * sr)
             samples = int(duration * sr)
             start = segment_idx * hop
             
-            # Verificar límites
             if start + samples > len(y):
-                # Padding si es necesario
                 segment = np.zeros(samples)
                 available = len(y) - start
                 if available > 0:
@@ -134,20 +136,18 @@ def load_segments_from_csv(df, duration, overlap):
             else:
                 segment = y[start:start + samples]
             
-            # Extraer MFCC
-            feat = extract_mfcc_features(segment, sr=16000, n_mfcc=N_MFCC)
-            features.append(feat)
+            mfcc = extract_mfcc_raw(segment, sr=16000, n_mfcc=N_MFCC)
+            features.append(mfcc)
             
         except Exception as e:
             print(f"    Error en {audio_path}, segmento {segment_idx}: {e}")
             failed += 1
-            # Usar features ceros como fallback
-            features.append(np.zeros(240))
+            features.append(np.zeros((N_MFCC, int(duration * 16000))))
     
     if failed > 0:
         print(f"    ⚠️  {failed} segmentos fallaron, usando ceros")
     
-    return np.array(features)
+    return features
 
 
 def extract_features_from_csv(train_csv, test_csv, blind_csv, duration, overlap, cache_path):
@@ -214,6 +214,42 @@ def extract_features_from_csv(train_csv, test_csv, blind_csv, duration, overlap,
     return (X_train, y_train, sessions_train,
             X_test, y_test, sessions_test,
             X_blind, y_blind, sessions_blind)
+
+
+class MFCCRawDataset(Dataset):
+    """Dataset para MFCC raw (no agregados) con padding para XVector."""
+    
+    def __init__(self, features, labels_plate, labels_electrode, labels_current):
+        self.features = features
+        self.labels_plate = torch.LongTensor(labels_plate)
+        self.labels_electrode = torch.LongTensor(labels_electrode)
+        self.labels_current = torch.LongTensor(labels_current)
+    
+    def __len__(self):
+        return len(self.features)
+    
+    def __getitem__(self, idx):
+        feat = torch.FloatTensor(self.features[idx])
+        return feat, self.labels_plate[idx], self.labels_electrode[idx], self.labels_current[idx]
+
+
+def collate_fn(batch):
+    """Collation function para manejar tamaños variables."""
+    feats = [item[0] for item in batch]
+    labels_plate = torch.stack([item[1] for item in batch])
+    labels_electrode = torch.stack([item[2] for item in batch])
+    labels_current = torch.stack([item[3] for item in batch])
+    
+    max_time = max(feat.shape[1] for feat in feats)
+    
+    padded = []
+    for feat in feats:
+        if feat.shape[1] < max_time:
+            pad = torch.zeros(feat.shape[0], max_time - feat.shape[1])
+            feat = torch.cat([feat, pad], dim=1)
+        padded.append(feat)
+    
+    return torch.stack(padded), labels_plate, labels_electrode, labels_current
 
 
 def train_model(model, train_loader, val_loader, device):
@@ -301,28 +337,44 @@ def evaluate_blind(models, X_blind, y_blind, le_plate, le_electrode, le_current,
     print("EVALUACIÓN EN CONJUNTO BLIND")
     print("="*60)
     
-    X_tensor = torch.FloatTensor(X_blind).to(device)
+    blind_dataset = MFCCRawDataset(
+        X_blind,
+        le_plate.transform(y_blind['plate']),
+        le_electrode.transform(y_blind['electrode']),
+        le_current.transform(y_blind['current'])
+    )
+    blind_loader = DataLoader(blind_dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn)
     
-    # Soft voting
     all_logits_plate = []
     all_logits_electrode = []
     all_logits_current = []
     
     with torch.no_grad():
-        for model in models:
-            out = model(X_tensor)
-            all_logits_plate.append(out['plate'].cpu().numpy())
-            all_logits_electrode.append(out['electrode'].cpu().numpy())
-            all_logits_current.append(out['current'].cpu().numpy())
-    
-    # Promediar logits
-    avg_plate = np.mean(all_logits_plate, axis=0).argmax(axis=1)
-    avg_electrode = np.mean(all_logits_electrode, axis=0).argmax(axis=1)
-    avg_current = np.mean(all_logits_current, axis=0).argmax(axis=1)
+        for batch in blind_loader:
+            x, _, _, _ = batch
+            x = x.to(device)
+            
+            batch_logits_plate = []
+            batch_logits_electrode = []
+            batch_logits_current = []
+            
+            for model in models:
+                out = model(x)
+                batch_logits_plate.append(out['plate'].cpu().numpy())
+                batch_logits_electrode.append(out['electrode'].cpu().numpy())
+                batch_logits_current.append(out['current'].cpu().numpy())
+            
+            all_logits_plate.extend(np.mean(batch_logits_plate, axis=0))
+            all_logits_electrode.extend(np.mean(batch_logits_electrode, axis=0))
+            all_logits_current.extend(np.mean(batch_logits_current, axis=0))
     
     y_true_plate = le_plate.transform(y_blind['plate'])
     y_true_electrode = le_electrode.transform(y_blind['electrode'])
     y_true_current = le_current.transform(y_blind['current'])
+    
+    avg_plate = np.array(all_logits_plate).argmax(axis=1)
+    avg_electrode = np.array(all_logits_electrode).argmax(axis=1)
+    avg_current = np.array(all_logits_current).argmax(axis=1)
     
     results = {
         'plate': {
@@ -339,9 +391,29 @@ def evaluate_blind(models, X_blind, y_blind, le_plate, le_electrode, le_current,
         },
     }
     
+    exact_match = np.mean(
+        (avg_plate == y_true_plate) & 
+        (avg_electrode == y_true_electrode) & 
+        (avg_current == y_true_current)
+    )
+    
+    hamming_accuracy = np.mean(
+        (avg_plate == y_true_plate).astype(int) + 
+        (avg_electrode == y_true_electrode).astype(int) + 
+        (avg_current == y_true_current).astype(int)
+    ) / 3
+    
+    results['global'] = {
+        'exact_match': float(exact_match),
+        'hamming_accuracy': float(hamming_accuracy),
+    }
+    
     print(f"\nResultados Blind (Ensemble de {len(models)} modelos):")
     for task, metrics in results.items():
-        print(f"  {task:12s} - Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1']:.4f}")
+        if task == 'global':
+            print(f"  {'Global':12s} - Exact Match: {metrics['exact_match']:.4f}, Hamming: {metrics['hamming_accuracy']:.4f}")
+        else:
+            print(f"  {task:12s} - Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1']:.4f}")
     
     return results
 
@@ -383,7 +455,7 @@ def main():
     )
     
     # Combinar train+test para K-Fold CV
-    X_all = np.vstack([X_train, X_test])
+    X_all = X_train + X_test  # Lista concatenada
     y_all = {
         'plate': np.concatenate([np.array(y_train['plate']), np.array(y_test['plate'])]),
         'electrode': np.concatenate([np.array(y_train['electrode']), np.array(y_test['electrode'])]),
@@ -415,33 +487,20 @@ def main():
     for fold_idx, (train_idx, val_idx) in enumerate(skf.split(X_all, y_plate, sessions_all)):
         print(f"\nFold {fold_idx + 1}/{args.k_folds}")
         
-        X_tr, X_val = X_all[train_idx], X_all[val_idx]
+        X_tr = [X_all[i] for i in train_idx]
+        X_val = [X_all[i] for i in val_idx]
         yp_tr, yp_val = y_plate[train_idx], y_plate[val_idx]
         ye_tr, ye_val = y_electrode[train_idx], y_electrode[val_idx]
         yc_tr, yc_val = y_current[train_idx], y_current[val_idx]
         
-        # XVector espera entrada 3D (batch, features, time), agregar dimensión temporal
-        X_tr_3d = torch.FloatTensor(X_tr).unsqueeze(2)  # (N, 240, 1)
-        X_val_3d = torch.FloatTensor(X_val).unsqueeze(2)
+        train_dataset = MFCCRawDataset(X_tr, yp_tr, ye_tr, yc_tr)
+        val_dataset = MFCCRawDataset(X_val, yp_val, ye_val, yc_val)
         
-        train_dataset = TensorDataset(
-            X_tr_3d,
-            torch.LongTensor(yp_tr),
-            torch.LongTensor(ye_tr),
-            torch.LongTensor(yc_tr)
-        )
-        val_dataset = TensorDataset(
-            X_val_3d,
-            torch.LongTensor(yp_val),
-            torch.LongTensor(ye_val),
-            torch.LongTensor(yc_val)
-        )
-        
-        train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
-        val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
+        train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_fn, drop_last=True)
+        val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn)
         
         model = XVectorModel(
-            input_size=240,
+            input_size=40,  # MFCC raw tiene 40 coeficientes
             num_classes_plate=len(le_plate.classes_),
             num_classes_electrode=len(le_electrode.classes_),
             num_classes_current=len(le_current.classes_)

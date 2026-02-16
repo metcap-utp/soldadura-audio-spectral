@@ -397,9 +397,29 @@ def evaluate_blind(models, X_blind, y_blind, le_plate, le_electrode, le_current,
         },
     }
     
+    exact_match = np.mean(
+        (avg_plate == y_true_plate) & 
+        (avg_electrode == y_true_electrode) & 
+        (avg_current == y_true_current)
+    )
+    
+    hamming_accuracy = np.mean(
+        (avg_plate == y_true_plate).astype(int) + 
+        (avg_electrode == y_true_electrode).astype(int) + 
+        (avg_current == y_true_current).astype(int)
+    ) / 3
+    
+    results['global'] = {
+        'exact_match': float(exact_match),
+        'hamming_accuracy': float(hamming_accuracy),
+    }
+    
     print(f"\nResultados Blind (Ensemble de {len(models)} modelos):")
     for task, metrics in results.items():
-        print(f"  {task:12s} - Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1']:.4f}")
+        if task == 'global':
+            print(f"  {'Global':12s} - Exact Match: {metrics['exact_match']:.4f}, Hamming: {metrics['hamming_accuracy']:.4f}")
+        else:
+            print(f"  {task:12s} - Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1']:.4f}")
     
     return results
 
