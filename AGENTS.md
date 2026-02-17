@@ -341,7 +341,7 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
 Ruta de audio configurable en `utils/audio_utils.py`:
 
 ```python
-AUDIO_BASE_DIR = Path("/home/luis/projects/tesis/audio/vggish-backbone/audio")
+AUDIO_BASE_DIR = Path("/home/luis/projects/vggish-backbone/audio")
 ```
 
 ### Estilo de Gráficas (Científico)
@@ -465,3 +465,7 @@ python entrenar.py --duration 1 --overlap 0.0 --k-folds 3
 3. **CUDA out of memory**: Reducir `--batch-size` o usar `--device cpu`
 4. **Missing splits**: Ejecutar `python generar_splits.py --duration X --overlap Y` primero
 5. **Cache inválido**: Usar `--no-cache` para forzar recálculo de features
+
+# Reglas
+
+1. No generar logs, o de ser necesario, eliminarlos después de su uso.

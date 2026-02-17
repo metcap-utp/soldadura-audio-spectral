@@ -1,54 +1,41 @@
-# Soldadura Audio MFCC Baseline
+# Soldadura Audio MFCC - Spectral Analysis
 
-Baseline espectral para comparar contra VGGish, usando MFCC + clasificadores clasicos.
+Clasificación de audio de soldadura SMAW usando features MFCC y redes neuronales profundas.
 
-## Objetivo
+## Descripción
 
-- Comparar desempeno por duracion y overlap con el pipeline VGGish.
-- Usar los mismos splits y el mismo esquema de segmentacion on-the-fly.
+Este proyecto implementa un pipeline de clasificación multi-task para identificar:
+- Espesor de placa (3 clases)
+- Tipo de electrodo (4 clases)  
+- Tipo de corriente (2 clases)
 
-## Estructura
+A partir de segmentos de audio de soldadura. Utiliza características MFCC (40 coeficientes) 
+extraídas directamente del audio, combinadas con arquitecturas de deep learning:
+X-Vector (TDNN), ECAPA-TDNN y FeedForward.
 
-```
-.
-├── mfcc_baseline/
-│   ├── audio_paths.py
-│   ├── config.py
-│   ├── dataset.py
-│   ├── features.py
-│   ├── metrics.py
-│   ├── segmenter.py
-│   ├── splits.py
-│   └── train.py
-├── scripts/
-│   ├── generate_splits.py
-│   └── train_eval.py
-├── config.yaml
-└── requirements.txt
-```
+## Características
 
-## Configuracion
+- Extracción de features MFCC con cache
+- K-Fold Cross-Validation (10 folds)
+- Ensemble voting para evaluación
+- Métricas globales (Exact Match, Hamming Accuracy)
+- Comparación justa con pipeline VGGish
 
-1. Ajusta `config.yaml` con la ruta al directorio `audio/` del repo VGGish.
-2. (Opcional) define `AUDIO_ROOT` como variable de entorno para sobreescribir `config.yaml`.
+## Uso
 
-## Generar splits (10seg, overlap 0.5)
+```bash
+# Generar splits
+python generar_splits.py --duration 10 --overlap 0.5
 
-```
-python scripts/generate_splits.py --duration 10 --overlap 0.5 --output-dir splits/10seg
+# Entrenar modelo
+python entrenar_ecapa.py --duration 10 --overlap 0.5 --k-folds 10
+
+# Comparar resultados
+python scripts/comparar_modelos.py 10seg --save
 ```
 
-## Entrenar y evaluar baseline
+## Comparación con VGGish
 
-```
-python scripts/train_eval.py \
-  --duration 10 \
-  --overlap 0.5 \
-  --splits-dir splits/10seg \
-  --output-dir outputs/10seg/overlap_0.5 \
-  --model svm
-```
-
-## Referencias
-
-- TODO: agregar citas a articulos sobre MFCC y clasificacion de audio para justificar el baseline.
+Este proyecto está diseñado para comparación directa con el proyecto vggish-backbone.
+Ambos usan la misma estructura, splits y configuración para permitir evaluación 
+justa entre MFCC features vs VGGish embeddings.

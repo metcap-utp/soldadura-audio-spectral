@@ -32,6 +32,7 @@ from torch.utils.data import DataLoader, Dataset
 sys.path.insert(0, str(Path(__file__).parent))
 from weld_audio_classifier.models import XVectorModel
 from utils.audio_utils import AUDIO_BASE_DIR
+from utils.timing import Timer, timer
 
 warnings.filterwarnings("ignore")
 
@@ -158,26 +159,29 @@ def extract_features_from_csv(train_csv, test_csv, blind_csv, duration, overlap,
         return (data['X_train'], data['y_train'], data['sessions_train'],
                 data['X_test'], data['y_test'], data['sessions_test'],
                 data['X_blind'], data['y_blind'], data['sessions_blind'])
-    
+
     # Cargar CSVs
     print(f"Cargando CSVs...")
     train_df = pd.read_csv(train_csv)
     test_df = pd.read_csv(test_csv)
     blind_df = pd.read_csv(blind_csv)
-    
+
     print(f"  Train: {len(train_df)} segmentos")
     print(f"  Test: {len(test_df)} segmentos")
     print(f"  Blind: {len(blind_df)} segmentos")
-    
+
     # Extraer features
     print(f"\nExtrayendo MFCC de train...")
-    X_train = load_segments_from_csv(train_df, duration, overlap)
-    
+    with Timer("Extracción Train"):
+        X_train = load_segments_from_csv(train_df, duration, overlap)
+
     print(f"Extrayendo MFCC de test...")
-    X_test = load_segments_from_csv(test_df, duration, overlap)
-    
+    with Timer("Extracción Test"):
+        X_test = load_segments_from_csv(test_df, duration, overlap)
+
     print(f"Extrayendo MFCC de blind...")
-    X_blind = load_segments_from_csv(blind_df, duration, overlap)
+    with Timer("Extracción Blind"):
+        X_blind = load_segments_from_csv(blind_df, duration, overlap)
     
     # Preparar labels y sessions
     sessions_train = train_df['sesion'].values
@@ -257,15 +261,18 @@ def train_model(model, train_loader, val_loader, device):
     optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=1e-6)
     criterion = nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
-    
+
     swa_model = AveragedModel(model)
     swa_scheduler = SWALR(optimizer, swa_lr=1e-4)
-    
+
     best_acc = 0
     patience = 0
     acc_plate = acc_electrode = acc_current = 0.0
-    
+
+    epoch_times = []
+
     for epoch in range(NUM_EPOCHS):
+        epoch_start = time.time()
         model.train()
         for batch in train_loader:
             x, y_plate, y_electrode, y_current = batch
@@ -318,16 +325,29 @@ def train_model(model, train_loader, val_loader, device):
         else:
             patience += 1
         
+        epoch_time = time.time() - epoch_start
+        epoch_times.append(epoch_time)
+
         if patience >= EARLY_STOP_PATIENCE:
+            avg_epoch_time = sum(epoch_times) / len(epoch_times)
             print(f"  Early stopping en época {epoch + 1}")
+            print(f"  Tiempo promedio por época: {avg_epoch_time:.2f}s")
             break
-    
+
+    if len(epoch_times) > 0:
+        avg_epoch_time = sum(epoch_times) / len(epoch_times)
+        print(f"  Tiempo promedio por época: {avg_epoch_time:.2f}s")
+
     torch.optim.swa_utils.update_bn(train_loader, swa_model, device=device)
-    
+
+    avg_epoch_time = sum(epoch_times) / len(epoch_times) if epoch_times else 0
+
     return model, swa_model, {
         'accuracy_plate': float(acc_plate),
         'accuracy_electrode': float(acc_electrode),
         'accuracy_current': float(acc_current),
+        'avg_epoch_time': avg_epoch_time,
+        'num_epochs_trained': len(epoch_times),
     }
 
 
@@ -420,7 +440,8 @@ def evaluate_blind(models, X_blind, y_blind, le_plate, le_electrode, le_current,
 
 def main():
     args = parse_args()
-    
+    total_start_time = time.time()
+
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     print("="*60)
     print("ENTRENAMIENTO X-VECTOR SMAW (Multi-Task)")
@@ -444,15 +465,17 @@ def main():
     
     # Asegurar que existan CSVs
     print("\nVerificando CSVs...")
-    train_csv, test_csv, blind_csv = ensure_csvs_exist(args.duration, args.overlap, args.seed)
+    with Timer("Generación/Verificación CSVs"):
+        train_csv, test_csv, blind_csv = ensure_csvs_exist(args.duration, args.overlap, args.seed)
     
     # Cargar features
     print("\nCargando features desde CSVs...")
-    (X_train, y_train, sessions_train,
-     X_test, y_test, sessions_test,
-     X_blind, y_blind, sessions_blind) = extract_features_from_csv(
-        train_csv, test_csv, blind_csv, args.duration, args.overlap, cache_path
-    )
+    with Timer("Carga/Extracción Features Total"):
+        (X_train, y_train, sessions_train,
+         X_test, y_test, sessions_test,
+         X_blind, y_blind, sessions_blind) = extract_features_from_csv(
+            train_csv, test_csv, blind_csv, args.duration, args.overlap, cache_path
+        )
     
     # Combinar train+test para K-Fold CV
     X_all = X_train + X_test  # Lista concatenada
@@ -520,6 +543,8 @@ def main():
         fold_results.append({
             'fold': fold_idx,
             'time_seconds': fold_time,
+            'avg_epoch_time': metrics.get('avg_epoch_time', 0),
+            'num_epochs_trained': metrics.get('num_epochs_trained', 0),
             'accuracy_plate': metrics['accuracy_plate'],
             'accuracy_electrode': metrics['accuracy_electrode'],
             'accuracy_current': metrics['accuracy_current'],
@@ -531,12 +556,19 @@ def main():
         print(f"  Time: {fold_time:.1f}s")
     
     # Evaluar en blind
-    blind_results = evaluate_blind(
-        trained_models, X_blind, y_blind, 
-        le_plate, le_electrode, le_current, device
-    )
+    with Timer("Evaluación Blind"):
+        blind_results = evaluate_blind(
+            trained_models, X_blind, y_blind,
+            le_plate, le_electrode, le_current, device
+        )
     
-    # Guardar resultados
+    # Calcular tiempos totales
+    total_time = time.time() - total_start_time
+    total_cv_time = sum(f['time_seconds'] for f in fold_results)
+    avg_time_per_fold = total_cv_time / args.k_folds if fold_results else 0
+    avg_time_per_epoch = sum(f.get('avg_epoch_time', 0) for f in fold_results) / len(fold_results) if fold_results else 0
+
+    # Guardar resultados con tiempos detallados
     results = {
         'timestamp': datetime.now().isoformat(),
         'model_type': 'xvector',
@@ -545,6 +577,15 @@ def main():
             'duration': args.duration,
             'overlap': args.overlap,
             'seed': args.seed,
+        },
+        'timing': {
+            'total_seconds': total_time,
+            'total_minutes': total_time / 60,
+            'cv_seconds': total_cv_time,
+            'cv_minutes': total_cv_time / 60,
+            'avg_per_fold_seconds': avg_time_per_fold,
+            'avg_per_fold_minutes': avg_time_per_fold / 60,
+            'avg_per_epoch_seconds': avg_time_per_epoch,
         },
         'fold_results': fold_results,
         'blind_evaluation': blind_results,
@@ -560,7 +601,14 @@ def main():
     
     all_results.append(results)
     results_path.write_text(json.dumps(all_results, indent=2))
-    
+
+    print("\n" + "="*60)
+    print("RESUMEN DE TIEMPOS")
+    print("="*60)
+    print(f"  Tiempo total: {results['timing']['total_seconds']:.1f}s ({results['timing']['total_minutes']:.1f} min)")
+    print(f"  Tiempo CV (suma folds): {results['timing']['cv_seconds']:.1f}s ({results['timing']['cv_minutes']:.1f} min)")
+    print(f"  Tiempo promedio por fold: {results['timing']['avg_per_fold_seconds']:.1f}s")
+
     print("\n" + "="*60)
     print("ENTRENAMIENTO COMPLETADO")
     print("="*60)

@@ -29,8 +29,26 @@ from torch.utils.data import DataLoader, TensorDataset
 # Imports del proyecto actual
 sys.path.insert(0, str(Path(__file__).parent))
 from weld_audio_classifier.models.xvector import XVectorModel
-from weld_audio_classifier.features import extract_mfcc_features
 from utils.audio_utils import AUDIO_BASE_DIR, get_audio_files
+
+
+def extract_mfcc_temporal(y: np.ndarray, sr: int = 16000, n_mfcc: int = 40) -> np.ndarray:
+    """Extrae MFCC con deltas manteniendo dimensión temporal.
+    
+    Returns:
+        Array de shape (n_frames, n_mfcc * 3) con MFCC + delta + delta2
+    """
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc, n_fft=2048, hop_length=512)
+    
+    # Calcular deltas
+    delta1 = librosa.feature.delta(mfcc)
+    delta2 = librosa.feature.delta(mfcc, order=2)
+    
+    # Stack: (n_mfcc * 3, n_frames)
+    stacked = np.vstack([mfcc, delta1, delta2])
+    
+    # Transponer para (n_frames, n_mfcc * 3)
+    return stacked.T
 from utils.timing import timer
 
 warnings.filterwarnings("ignore")
@@ -128,6 +146,7 @@ def train_model(model, train_loader, val_loader, device):
     
     best_acc = 0
     patience = 0
+    training_history = []  # Historial de entrenamiento por época
     
     for epoch in range(NUM_EPOCHS):
         model.train()
@@ -161,6 +180,12 @@ def train_model(model, train_loader, val_loader, device):
         
         acc = accuracy_score(all_labels, all_preds)
         
+        # Guardar historial de esta época (solo accuracy disponible en este modelo)
+        training_history.append({
+            "epoch": epoch + 1,
+            "val_acc_plate": acc
+        })
+        
         if epoch >= SWA_START:
             swa_model.update_parameters(model)
             swa_scheduler.step()
@@ -177,7 +202,7 @@ def train_model(model, train_loader, val_loader, device):
             break
     
     torch.optim.swa_utils.update_bn(train_loader, swa_model, device=device)
-    return model, swa_model, {'accuracy': best_acc}
+    return model, swa_model, {'accuracy': best_acc, 'training_history': training_history}
 
 
 def main():
@@ -263,7 +288,8 @@ def main():
         fold_results.append({
             'fold': fold_idx,
             'time_seconds': fold_time,
-            'accuracy': metrics['accuracy']
+            'accuracy': metrics['accuracy'],
+            'training_history': metrics.get('training_history', [])  # Guardar historial de entrenamiento
         })
         
         print(f"  Acc: {metrics['accuracy']:.4f}, Time: {fold_time:.1f}s")

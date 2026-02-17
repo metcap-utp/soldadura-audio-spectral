@@ -5,7 +5,7 @@ import soundfile as sf
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
-AUDIO_BASE_DIR = Path("/home/luis/projects/tesis/audio/vggish-backbone/audio")
+AUDIO_BASE_DIR = Path("/home/luis/projects/vggish-backbone/audio")
 
 
 def extract_session_from_path(audio_path: str) -> str:

@@ -17,6 +17,7 @@ Uso:
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 import librosa
@@ -28,6 +29,7 @@ from sklearn.model_selection import train_test_split
 ROOT_DIR = Path(__file__).parent
 sys.path.insert(0, str(ROOT_DIR))
 from utils.audio_utils import AUDIO_BASE_DIR, get_audio_files
+from utils.timing import Timer, timer
 
 
 RANDOM_SEED = 42
@@ -164,11 +166,12 @@ def compute_data_stats(df: pd.DataFrame):
 
 def main():
     args = parse_args()
-    
+    total_start = time.time()
+
     duration = args.duration
     overlap = args.overlap
     seed = args.seed
-    
+
     print("=" * 60)
     print("GENERACIÓN DE SPLITS ESTRATIFICADOS")
     print("=" * 60)
@@ -176,34 +179,39 @@ def main():
     print(f"Overlap: {overlap}")
     print(f"Seed: {seed}")
     print("=" * 60)
-    
+
     # Set seed
     np.random.seed(seed)
-    
+
     # Directorio de duración
     duration_dir = ROOT_DIR / f"{duration:02d}seg"
     duration_dir.mkdir(exist_ok=True)
-    
+
     # Obtener archivos de audio
     print("\nDescubriendo archivos de audio...")
-    audio_files = get_audio_files()
+    with Timer("Descubrimiento archivos"):
+        audio_files = get_audio_files()
     print(f"Total de archivos: {len(audio_files)}")
-    
+
     # Crear splits por sesión
     print("\nCreando splits estratificados por sesión...")
-    train_files, test_files, blind_files = create_session_based_split(audio_files, seed)
-    
+    with Timer("Creación splits"):
+        train_files, test_files, blind_files = create_session_based_split(audio_files, seed)
+
     print(f"\nSesiones:")
     print(f"  Train: {len(set(f['sesion'] for f in train_files))} sesiones, {len(train_files)} archivos")
     print(f"  Test: {len(set(f['sesion'] for f in test_files))} sesiones, {len(test_files)} archivos")
     print(f"  Blind: {len(set(f['sesion'] for f in blind_files))} sesiones, {len(blind_files)} archivos")
-    
+
     # Generar CSVs con segmentos
     print(f"\nGenerando CSVs con segmentos (duración={duration}s, overlap={overlap})...")
-    
-    train_df = generate_segment_csv(train_files, float(duration), overlap)
-    test_df = generate_segment_csv(test_files, float(duration), overlap)
-    blind_df = generate_segment_csv(blind_files, float(duration), overlap)
+
+    with Timer("Generación CSV Train"):
+        train_df = generate_segment_csv(train_files, float(duration), overlap)
+    with Timer("Generación CSV Test"):
+        test_df = generate_segment_csv(test_files, float(duration), overlap)
+    with Timer("Generación CSV Blind"):
+        blind_df = generate_segment_csv(blind_files, float(duration), overlap)
     
     # Guardar CSVs
     train_path = duration_dir / "train.csv"
@@ -226,28 +234,39 @@ def main():
     test_stats = compute_data_stats(test_df)
     blind_stats = compute_data_stats(blind_df)
     
+    total_time = time.time() - total_start
+
     stats = {
         'segment_duration': duration,
         'overlap_ratio': overlap,
         'random_seed': seed,
+        'timing': {
+            'total_seconds': total_time,
+            'total_minutes': total_time / 60,
+        },
         'train': train_stats,
         'test': test_stats,
         'blind': blind_stats,
     }
-    
+
     stats_path = duration_dir / "data_stats.json"
     import json
     with open(stats_path, "w") as f:
         json.dump(stats, f, indent=2)
     
     print(f"\nEstadísticas guardadas: {stats_path}")
-    
+
     # Crear CSV completo
     complete_df = pd.concat([train_df, test_df, blind_df], ignore_index=True)
     complete_path = duration_dir / "completo.csv"
     complete_df.to_csv(complete_path, index=False)
     print(f"CSV completo: {complete_path} ({len(complete_df)} segmentos)")
-    
+
+    print("\n" + "=" * 60)
+    print("RESUMEN DE TIEMPOS")
+    print("=" * 60)
+    print(f"  Tiempo total: {stats['timing']['total_seconds']:.2f}s ({stats['timing']['total_minutes']:.2f} min)")
+
     print("\n" + "=" * 60)
     print("¡Splits generados exitosamente!")
     print("=" * 60)

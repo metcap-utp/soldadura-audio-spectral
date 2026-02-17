@@ -1,0 +1,159 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{/home/luis/PlotNeuralNet/layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\node[canvas is zy plane at x=0] (input) at (0,0,0) {\includegraphics[width=8cm,height=8cm]{input}};
+
+\pic[shift={(2.5,0,0)}] at (input-east) 
+    {RightBandedBox={
+        name=frame1,
+        caption={\parbox{2.8cm}{\centering\small\textbf{Frame 1}\\\footnotesize 512$\times$240$\times$5\\ d=1}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=35,
+        width=3,
+        depth=35
+        }
+    };
+
+\draw [connection]  (input-east)    -- node {\midarrow} (frame1-west);
+
+\pic[shift={(2.5,0,0)}] at (frame1-east) 
+    {RightBandedBox={
+        name=frame2,
+        caption={\parbox{2.8cm}{\centering\small\textbf{Frame 2}\\\footnotesize 512$\times$512$\times$3\\ d=2}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=35,
+        width=3,
+        depth=35
+        }
+    };
+
+\draw [connection]  (frame1-east)    -- node {\midarrow} (frame2-west);
+
+\pic[shift={(2.5,0,0)}] at (frame2-east) 
+    {RightBandedBox={
+        name=frame3,
+        caption={\parbox{2.8cm}{\centering\small\textbf{Frame 3}\\\footnotesize 512$\times$512$\times$3\\ d=3}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=35,
+        width=3,
+        depth=35
+        }
+    };
+
+\draw [connection]  (frame2-east)    -- node {\midarrow} (frame3-west);
+
+\pic[shift={(2.5,0,0)}] at (frame3-east) 
+    {RightBandedBox={
+        name=frame4,
+        caption={\parbox{2.5cm}{\centering\small\textbf{Frame 4}\\\footnotesize 512$\times$512$\times$1}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=32,
+        width=2.5,
+        depth=32
+        }
+    };
+
+\draw [connection]  (frame3-east)    -- node {\midarrow} (frame4-west);
+
+\pic[shift={(2.5,0,0)}] at (frame4-east) 
+    {RightBandedBox={
+        name=frame5,
+        caption={\parbox{2.8cm}{\centering\small\textbf{Frame 5}\\\footnotesize 1500$\times$512$\times$1}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=40,
+        width=4,
+        depth=40
+        }
+    };
+
+\draw [connection]  (frame4-east)    -- node {\midarrow} (frame5-west);
+
+\pic[shift={(2.8,0,0)}] at (frame5-east) 
+    {Box={
+        name=stats,
+        caption={\parbox{2.5cm}{\centering\small\textbf{Stats Pool}\\\footnotesize mean + std\\3000}},
+        fill=\PoolColor,
+        height=30,
+        width=3,
+        depth=30
+        }
+    };
+
+\draw [connection]  (frame5-east)    -- node {\midarrow} (stats-west);
+
+\pic[shift={(2.8,0,0)}] at (stats-east) 
+    {Box={
+        name=segment,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Segment}\\\footnotesize FC + ReLU\\3000$\times$512}},
+        fill=\FcColor,
+        height=28,
+        width=2.5,
+        depth=28
+        }
+    };
+
+\draw [connection]  (stats-east)    -- node {\midarrow} (segment-west);
+
+\pic[shift={(3.5,3.5,0)}] at (segment-east) 
+    {Box={
+        name=head_espesor,
+        caption={\parbox{2.2cm}{\centering\small\textbf{Espesor}\\\footnotesize 512$\times$3}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=12,
+        width=2.5,
+        depth=12
+        }
+    };
+
+\pic[shift={(3.5,0,0)}] at (segment-east) 
+    {Box={
+        name=head_electrodo,
+        caption={\parbox{2.2cm}{\centering\small\textbf{Electrodo}\\\footnotesize 512$\times$4}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=14,
+        width=2.5,
+        depth=14
+        }
+    };
+
+\pic[shift={(3.5,-3.5,0)}] at (segment-east) 
+    {Box={
+        name=head_corriente,
+        caption={\parbox{2.2cm}{\centering\small\textbf{Corriente}\\\footnotesize 512$\times$2}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=10,
+        width=2.5,
+        depth=10
+        }
+    };
+\draw [connection]  (segment-east) -- node {\midarrow} (head_espesor-west);\draw [connection]  (segment-east) -- node {\midarrow} (head_electrodo-west);\draw [connection]  (segment-east) -- node {\midarrow} (head_corriente-west);
+\end{tikzpicture}
+\end{document}
