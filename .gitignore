@@ -99,3 +99,6 @@ inferencia.json
 */blind.csv
 */data_stats.json
 */.ipynb_checkpoints/
+
+
+*.sh

@@ -56,7 +56,7 @@
 ## Análisis
 
 1. **ECAPA-TDNN** es el mejor modelo tanto en Test Set como en Blind Set
-2. Las métricas de Blind Set son consistentes con Test Set, indicando buen generalization
+2. Las métricas de Blind Set son consistentes con Test Set
 3. La tarea **Current** tiene el mayor accuracy (>99%) en todos los modelos
 4. La tarea **Plate** es la más difícil, con mayor variación entre modelos
 

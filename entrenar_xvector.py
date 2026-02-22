@@ -459,7 +459,7 @@ def main():
     # Directorios
     duration_dir = Path(f"{args.duration:02d}seg")
     duration_dir.mkdir(exist_ok=True)
-    cache_path = duration_dir / "mfcc_cache" / f"features_xvector_overlap_{args.overlap}.pt"
+    cache_path = duration_dir / "mfcc_cache" / f"xvector_features_overlap_{args.overlap}.pt"
     models_dir = duration_dir / "modelos" / "xvector" / f"k{args.k_folds:02d}_overlap_{args.overlap}"
     models_dir.mkdir(parents=True, exist_ok=True)
     
