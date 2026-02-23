@@ -32,6 +32,15 @@ python scripts/graficar_folds.py 10seg --save
 python scripts/graficar_duraciones.py --save
 ```
 
+## Execution Constraints
+
+**IMPORTANTE: Las tareas de entrenamiento e inferencia deben ejecutarse de forma SECUENCIAL, nunca simultánea.**
+
+- No ejecutar `entrenar_*.py` en paralelo con otros entrenamientos
+- No ejecutar `inferir.py` en paralelo con entrenamientos
+- Esperar a que termine un proceso antes de iniciar otro
+- Esto se debe al uso intensivo de GPU y caché de archivos
+
 ## File Naming Conventions
 
 **Always check existing patterns before creating new files.**
@@ -69,11 +78,7 @@ from utils.audio_utils import AUDIO_BASE_DIR
 Always use type hints:
 
 ```python
-def train_epoch(
-    model: nn.Module,
-    dataloader: DataLoader,
-    device: str,
-) -> tuple[float, float]:
+def train_epoch(model: nn.Module, dataloader: DataLoader, device: str) -> tuple[float, float]:
     ...
 ```
 
@@ -95,14 +100,13 @@ if not audio_path.exists():
     raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
 # Avoid
-if not audio_path.exists():
-    raise Exception("Error")
+raise Exception("Error")
 ```
 
 ### PyTorch Patterns
 
 ```python
-# Training loop
+# Training
 model.train()
 for batch in dataloader:
     X, y = batch
@@ -118,12 +122,10 @@ model.eval()
 with torch.no_grad():
     for batch in dataloader:
         ...
-
-# Log loss
 loss_value = loss.detach().cpu().item()
 ```
 
-## Hyperparameters (from vggish-backbone)
+## Hyperparameters
 
 | Parameter | Value |
 |-----------|-------|
@@ -141,29 +143,13 @@ Optimizer: AdamW. Schedulers: `CosineAnnealingWarmRestarts(T_0=10, T_mult=2, eta
 ## Plot Style
 
 ```python
-plt.rcParams.update({
-    'font.size': 11,
-    'axes.labelsize': 12,
-    'figure.dpi': 300,
-    'savefig.dpi': 300,
-    'axes.grid': True,
-})
-
+plt.rcParams.update({'font.size': 11, 'axes.labelsize': 12, 'figure.dpi': 300, 'savefig.dpi': 300, 'axes.grid': True})
 COLORS = {"plate": "#2ecc71", "electrode": "#3498db", "current": "#e74c3c"}
 ```
 
 ## Commit Messages (Spanish)
 
-Format: `<tipo>: <descripción>`
-
-Types: `Agrega`, `Arregla`, `Organiza`, `Actualiza`, `Elimina`
-
-Examples:
-```
-Agrega modelo X-Vector para clasificación de audio
-Arregla error en dimensionamiento de tensores
-Organiza estructura de archivos del proyecto
-```
+Format: `<tipo>: <descripción>`. Types: `Agrega`, `Arregla`, `Organiza`, `Actualiza`, `Elimina`.
 
 ## Key Files
 
@@ -174,15 +160,12 @@ Organiza estructura de archivos del proyecto
 | `entrenar_feedforward.py` | FeedForward training |
 | `inferir.py` | Inference with ensemble voting |
 | `generar_splits.py` | Stratified split generation |
-| `weld_audio_classifier/models/xvector.py` | X-Vector architecture |
-| `weld_audio_classifier/models/multitask.py` | ECAPA-TDNN, FeedForward |
+| `weld_audio_classifier/models/` | Model architectures |
 | `utils/audio_utils.py` | Audio loading utilities |
 
 ## Git Ignore
 
-- `*/mfcc_cache/` - MFCC feature cache
-- `*/modelos/` - Trained models
-- `*/graficas/` - Generated figures
+- `*/mfcc_cache/`, `*/modelos/`, `*/graficas/`
 - `resultados.json`, `inferencia.json`
 
 ## Rules
