@@ -18,23 +18,20 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from plot_styles import (
+    COLORS,
+    MARKERS,
+    LINESTYLES,
+    TAREAS_LABELS,
+    METRIC_LABELS,
+    setup_axis,
+    save_figure,
+)
+
 # Directorio raíz del proyecto
 ROOT_DIR = Path(__file__).parent.parent
 
 TASKS = ["plate", "electrode", "current"]
-COLORS = {
-    "plate": "#2ecc71",
-    "electrode": "#3498db",
-    "current": "#e74c3c",
-}
-METRIC_MARKERS = {
-    "accuracy": "o",
-    "f1": "s",
-}
-METRIC_STYLES = {
-    "accuracy": "-",
-    "f1": "--",
-}
 
 # Configuración de idioma
 I18N = {
@@ -154,24 +151,13 @@ def extract_metrics_by_kfolds(results: list):
 
 def plot_metrics(data: dict, duration: str, metric_type: str = "all", lang: str = "es", save: bool = False):
     """Genera la gráfica de métricas."""
-    i18n = I18N[lang]
+    i18n_task = TAREAS_LABELS[lang]
+    i18n_metric = METRIC_LABELS[lang]
     
-    # Configurar estilo científico
-    plt.rcParams.update({
-        'font.size': 11,
-        'axes.labelsize': 12,
-        'axes.titlesize': 13,
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
-        'legend.fontsize': 10,
-        'figure.dpi': 300,
-        'savefig.dpi': 300,
-        'savefig.bbox': 'tight',
-        'axes.grid': True,
-        'grid.alpha': 0.3,
-        'lines.linewidth': 2,
-        'lines.markersize': 8,
-    })
+    # Etiquetas
+    xlabel_k = "Cantidad de Folds (K)" if lang == "es" else "Number of Folds (K)"
+    title_metric = "{metric} vs Cantidad de Folds" if lang == "es" else "{metric} vs Number of Folds"
+    suptitle = "Métricas vs Cantidad de Folds (K-Fold CV)" if lang == "es" else "Metrics vs Number of Folds (K-Fold CV)"
     
     # Determinar métricas a graficar
     if metric_type == "all":
@@ -207,26 +193,25 @@ def plot_metrics(data: dict, duration: str, metric_type: str = "all", lang: str 
                 k_values,
                 values,
                 yerr=errors,
-                label=i18n["task_names"][task],
+                label=i18n_task[task],
                 color=COLORS[task],
-                marker=METRIC_MARKERS[metric],
-                linestyle=METRIC_STYLES[metric],
+                marker=MARKERS[metric],
+                linestyle=LINESTYLES[metric],
                 capsize=5,
                 capthick=2,
                 elinewidth=1.5,
             )
         
-        ax.set_xlabel(i18n["xlabel_k"], fontweight='bold')
-        ax.set_ylabel(i18n["metric_names"][metric], fontweight='bold')
-        ax.set_title(i18n["title_metric"].format(metric=i18n["metric_names"][metric]), fontweight='bold')
+        ax.set_xlabel(xlabel_k, fontweight='bold')
+        ax.set_ylabel(i18n_metric[metric], fontweight='bold')
+        ax.set_title(title_metric.format(metric=i18n_metric[metric]), fontweight='bold')
         ax.legend(loc='best', framealpha=0.9)
-        ax.set_ylim([0, 1.05])
-        ax.set_xticks(k_values)
+        setup_axis(ax, k_values, values)
     
     # Título general
     if len(axes) > 1:
         fig.suptitle(
-            f"{i18n['suptitle']}\nDuración: {duration}",
+            f"{suptitle}\nDuración: {duration}",
             fontsize=14,
             fontweight='bold',
             y=1.02

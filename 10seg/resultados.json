@@ -97,6 +97,10 @@
         "exact_match": 0.9436619718309859,
         "hamming_accuracy": 0.974960876369327
       }
+    },
+    "training_time": {
+      "seconds": 844.1,
+      "minutes": 14.07
     }
   },
   {
@@ -197,6 +201,10 @@
         "exact_match": 0.9225352112676056,
         "hamming_accuracy": 0.9671361502347419
       }
+    },
+    "training_time": {
+      "seconds": 255.8,
+      "minutes": 4.26
     }
   },
   {
@@ -297,6 +305,10 @@
         "exact_match": 0.9507042253521126,
         "hamming_accuracy": 0.9804381846635368
       }
+    },
+    "training_time": {
+      "seconds": 1765.47,
+      "minutes": 29.42
     }
   },
   {
@@ -426,6 +438,10 @@
         "exact_match": 0.9436619718309859,
         "hamming_accuracy": 0.974960876369327
       }
+    },
+    "training_time": {
+      "seconds": 756.9,
+      "minutes": 12.61
     }
   },
   {
@@ -555,6 +571,10 @@
         "exact_match": 0.9436619718309859,
         "hamming_accuracy": 0.974960876369327
       }
+    },
+    "training_time": {
+      "seconds": 742.36,
+      "minutes": 12.37
     }
   },
   {
@@ -655,6 +675,10 @@
         "exact_match": 0.9507042253521126,
         "hamming_accuracy": 0.9804381846635368
       }
+    },
+    "training_time": {
+      "seconds": 1644.36,
+      "minutes": 27.41
     }
   },
   {
@@ -755,6 +779,10 @@
         "exact_match": 0.9225352112676056,
         "hamming_accuracy": 0.9671361502347419
       }
+    },
+    "training_time": {
+      "seconds": 218.11,
+      "minutes": 3.64
     }
   }
 ]

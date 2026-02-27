@@ -19,44 +19,20 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from plot_styles import (
+    COLORS,
+    MARKERS,
+    LINESTYLES,
+    TAREAS_LABELS,
+    METRIC_LABELS,
+    setup_axis,
+    save_figure,
+)
+
 ROOT_DIR = Path(__file__).parent.parent
 DURATION_DIRS = ["01seg", "02seg", "05seg", "10seg", "20seg", "30seg", "50seg"]
 
 TASKS = ["plate", "electrode", "current"]
-COLORS = {
-    "plate": "#2ecc71",
-    "electrode": "#3498db",
-    "current": "#e74c3c",
-}
-
-I18N = {
-    "es": {
-        "task_names": {
-            "plate": "Espesor de Placa",
-            "electrode": "Tipo de Electrodo",
-            "current": "Tipo de Corriente",
-        },
-        "xlabel_dur": "Duración del Clip (segundos)",
-        "title": "Métricas vs Duración del Clip",
-        "metric_names": {
-            "accuracy": "Accuracy",
-            "f1": "F1-Score",
-        },
-    },
-    "en": {
-        "task_names": {
-            "plate": "Plate Thickness",
-            "electrode": "Electrode Type",
-            "current": "Current Type",
-        },
-        "xlabel_dur": "Clip Duration (seconds)",
-        "title": "Metrics vs Clip Duration",
-        "metric_names": {
-            "accuracy": "Accuracy",
-            "f1": "F1-Score",
-        },
-    },
-}
 
 
 def parse_args():
@@ -148,22 +124,11 @@ def extract_best_metrics(results_by_duration: dict, k_folds: int = None):
 
 def plot_metrics(metrics: dict, k_folds: int = None, lang: str = "es", save: bool = False):
     """Genera gráfica."""
-    i18n = I18N[lang]
+    i18n_task = TAREAS_LABELS[lang]
+    i18n_metric = METRIC_LABELS[lang]
     
-    plt.rcParams.update({
-        'font.size': 11,
-        'axes.labelsize': 12,
-        'axes.titlesize': 13,
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
-        'legend.fontsize': 10,
-        'figure.dpi': 300,
-        'savefig.dpi': 300,
-        'axes.grid': True,
-        'grid.alpha': 0.3,
-        'lines.linewidth': 2,
-        'lines.markersize': 8,
-    })
+    xlabel_dur = "Duración del Clip (segundos)" if lang == "es" else "Clip Duration (seconds)"
+    title = "Métricas vs Duración del Clip" if lang == "es" else "Metrics vs Clip Duration"
     
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
@@ -177,30 +142,26 @@ def plot_metrics(metrics: dict, k_folds: int = None, lang: str = "es", save: boo
             ax.plot(
                 durations,
                 values,
-                label=i18n["task_names"][task],
+                label=i18n_task[task],
                 color=COLORS[task],
-                marker="o" if metric_type == "accuracy" else "s",
-                linestyle="-" if metric_type == "accuracy" else "--",
-                linewidth=2,
-                markersize=8,
+                marker=MARKERS[metric_type],
+                linestyle=LINESTYLES[metric_type],
             )
         
-        ax.set_xlabel(i18n["xlabel_dur"], fontweight='bold')
-        ax.set_ylabel(i18n["metric_names"][metric_type], fontweight='bold')
-        ax.set_title(f"{i18n['metric_names'][metric_type]} vs Duración", fontweight='bold')
+        ax.set_xlabel(xlabel_dur, fontweight='bold')
+        ax.set_ylabel(i18n_metric[metric_type], fontweight='bold')
+        ax.set_title(f"{i18n_metric[metric_type]} vs Duración", fontweight='bold')
         ax.legend(loc='best', framealpha=0.9)
-        ax.set_ylim([0, 1.05])
-        ax.set_xticks(durations)
+        setup_axis(ax, durations, values)
     
     k_text = f"K={k_folds}" if k_folds else "Todos los K"
-    fig.suptitle(f"{i18n['title']}\n{k_text}", fontsize=14, fontweight='bold', y=1.02)
+    fig.suptitle(f"{title}\n{k_text}", fontsize=14, fontweight='bold', y=1.02)
     
     plt.tight_layout()
     
     if save:
         output_path = ROOT_DIR / "graficas" / f"metricas_vs_duracion_{k_folds or 'all'}folds.png"
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        save_figure(fig, output_path)
         print(f"Figura guardada: {output_path}")
     else:
         plt.show()

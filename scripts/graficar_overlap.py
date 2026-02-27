@@ -20,39 +20,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+from plot_styles import (
+    COLORS,
+    MARKERS,
+    LINESTYLES,
+    TAREAS_LABELS,
+    METRIC_LABELS,
+    setup_axis,
+    save_figure,
+)
+
 ROOT_DIR = Path(__file__).parent.parent
 OVERLAP_RATIOS = [0.0, 0.25, 0.5, 0.75]
 DURATION_DIRS = ["01seg", "02seg", "05seg", "10seg", "20seg", "30seg", "50seg"]
 
 TASKS = ["plate", "electrode", "current"]
-COLORS = {
-    "plate": "#2ecc71",
-    "electrode": "#3498db",
-    "current": "#e74c3c",
-}
-
-I18N = {
-    "es": {
-        "task_names": {
-            "plate": "Espesor de Placa",
-            "electrode": "Tipo de Electrodo",
-            "current": "Tipo de Corriente",
-        },
-        "xlabel": "Overlap Ratio",
-        "title": "Métricas vs Overlap Ratio",
-        "heatmap_title": "Heatmap: Duración vs Overlap",
-    },
-    "en": {
-        "task_names": {
-            "plate": "Plate Thickness",
-            "electrode": "Electrode Type",
-            "current": "Current Type",
-        },
-        "xlabel": "Overlap Ratio",
-        "title": "Metrics vs Overlap Ratio",
-        "heatmap_title": "Heatmap: Duration vs Overlap",
-    },
-}
 
 
 def parse_args():
@@ -115,22 +97,11 @@ def extract_metrics_by_overlap(k_folds: int, duration_filter: int = None):
 
 def plot_overlap_comparison(data: dict, k_folds: int, duration_filter: int, lang: str, save: bool):
     """Genera gráfica de métricas vs overlap."""
-    i18n = I18N[lang]
+    i18n_task = TAREAS_LABELS[lang]
+    i18n_metric = METRIC_LABELS[lang]
     
-    plt.rcParams.update({
-        'font.size': 11,
-        'axes.labelsize': 12,
-        'axes.titlesize': 13,
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
-        'legend.fontsize': 10,
-        'figure.dpi': 300,
-        'savefig.dpi': 300,
-        'axes.grid': True,
-        'grid.alpha': 0.3,
-        'lines.linewidth': 2,
-        'lines.markersize': 8,
-    })
+    xlabel = "Overlap Ratio"
+    title = "Métricas vs Overlap Ratio" if lang == "es" else "Metrics vs Overlap Ratio"
     
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     
@@ -153,31 +124,27 @@ def plot_overlap_comparison(data: dict, k_folds: int, duration_filter: int, lang
                 ax.plot(
                     overlaps,
                     values,
-                    label=i18n["task_names"][task],
+                    label=i18n_task[task],
                     color=COLORS[task],
-                    marker="o" if metric_type == "accuracy" else "s",
-                    linestyle="-" if metric_type == "accuracy" else "--",
-                    linewidth=2,
-                    markersize=8,
+                    marker=MARKERS[metric_type],
+                    linestyle=LINESTYLES[metric_type],
                 )
         
-        ax.set_xlabel(i18n["xlabel"], fontweight='bold')
-        ax.set_ylabel(metric_type.capitalize(), fontweight='bold')
-        ax.set_title(f"{metric_type.capitalize()} vs Overlap", fontweight='bold')
+        ax.set_xlabel(xlabel, fontweight='bold')
+        ax.set_ylabel(i18n_metric[metric_type], fontweight='bold')
+        ax.set_title(f"{i18n_metric[metric_type]} vs Overlap", fontweight='bold')
         ax.legend(loc='best', framealpha=0.9)
-        ax.set_ylim([0, 1.05])
-        ax.set_xticks(OVERLAP_RATIOS)
+        setup_axis(ax, overlaps, values)
     
     dur_text = f"{duration_filter}s" if duration_filter else "Todas las duraciones"
-    fig.suptitle(f"{i18n['title']}\nK={k_folds}, {dur_text}", fontsize=14, fontweight='bold', y=1.02)
+    fig.suptitle(f"{title}\nK={k_folds}, {dur_text}", fontsize=14, fontweight='bold', y=1.02)
     
     plt.tight_layout()
     
     if save:
         suffix = f"_{duration_filter}s" if duration_filter else ""
         output_path = ROOT_DIR / "graficas" / f"metricas_vs_overlap_k{k_folds}{suffix}.png"
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        save_figure(fig, output_path)
         print(f"Figura guardada: {output_path}")
     else:
         plt.show()
