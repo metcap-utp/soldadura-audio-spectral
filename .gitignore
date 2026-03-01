@@ -92,13 +92,5 @@ resultados.json
 inferencia.json
 *_resultados.json
 *_inferencia.json
-
-# Datos de entrenamiento
-*/train.csv
-*/test.csv
-*/blind.csv
-*/data_stats.json
-*/.ipynb_checkpoints/
-
-
-*.sh
+# Carpeta de backups de migración
+backups/

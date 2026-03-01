@@ -1,80 +1,59 @@
-# Resultados - Spectral Analysis (MFCC)
+# Spectral Analysis - Resultados
 
 ## Configuración
-
-- **Duración de segmento**: 10 segundos
-- **Overlap**: 0.5 (50%)
-- **K-Folds**: 10
-- **Seed**: 42
-- **Features**: MFCC (40 coeficientes)
-
-## Modelos Entrenados
-
-1. **X-Vector**: Red TDNN (Time Delay Neural Network)
-2. **ECAPA-TDNN**: ECAPA-TDNN con multi-head attention
-3. **FeedForward**: Red neuronal fully-connected
+- **Duración:** 5 segundos
+- **K-folds:** 10
+- **Overlap:** 0.5
 
 ---
 
-## Resultados Test Set (K-Fold Cross-Validation)
+## Métricas por Modelo (Blind Set)
 
-| Modelo | Plate | Electrode | Current | **Promedio** |
-|--------|-------|-----------|---------|--------------|
-| ECAPA-TDNN | 96.59% | 97.68% | 99.45% | **97.91%** |
-| X-Vector | 96.89% | 97.28% | 99.45% | 97.87% |
-| FeedForward | 95.25% | 96.56% | 99.46% | 97.09% |
-
-**Mejor modelo (Test Set)**: ECAPA-TDNN con 97.91% de accuracy promedio
+| Modelo | Plate Acc | Electrode Acc | Current Acc | Exact Match | Hamming |
+|--------|-----------|---------------|-------------|-------------|---------|
+| xvector | 0.9616 | 0.9682 | 0.9934 | 0.9374 | 0.9744 |
+| **ecapa** | 0.9682 | 0.9759 | 0.9923 | **0.9451** | **0.9788** |
+| feedforward | 0.9429 | 0.9539 | 0.9879 | 0.9111 | 0.9616 |
 
 ---
 
-## Resultados Blind Set (Evaluación Ciega)
+## Mejor Modelo: ecapa
 
-| Modelo | Plate | Electrode | Current | **Promedio** |
-|--------|-------|-----------|---------|--------------|
-| ECAPA-TDNN | 98.12% | 96.71% | 99.30% | **98.04%** |
-| X-Vector | 96.95% | 96.71% | 98.83% | 97.50% |
-| FeedForward | 94.84% | 95.77% | 99.53% | 96.71% |
-
-**Mejor modelo (Blind Set)**: ECAPA-TDNN con 98.04% de accuracy promedio
-
----
-
-## Métricas Globales (Blind Set)
-
-| Modelo | Exact Match | Hamming Accuracy |
-|--------|-------------|------------------|
-| **ECAPA-TDNN** | **95.07%** | **98.04%** |
-| X-Vector | 94.37% | 97.50% |
-| FeedForward | 92.25% | 96.71% |
-
-- **Exact Match**: Porcentaje de muestras donde las 3 etiquetas son correctas simultáneamente
-- **Hamming Accuracy**: Promedio de etiquetas correctas (1/3 por muestra)
+| Métrica | Valor |
+|---------|-------|
+| Exact Match | **0.9451** |
+| Hamming Accuracy | **0.9788** |
+| Plate Accuracy | 0.9682 |
+| Electrode Accuracy | 0.9759 |
+| Current Accuracy | 0.9923 |
 
 ---
 
-## Análisis
+## Figuras
 
-1. **ECAPA-TDNN** es el mejor modelo tanto en Test Set como en Blind Set
-2. Las métricas de Blind Set son consistentes con Test Set
-3. La tarea **Current** tiene el mayor accuracy (>99%) en todos los modelos
-4. La tarea **Plate** es la más difícil, con mayor variación entre modelos
+### Accuracy por Duración
+![Accuracy por duración](graficas/accuracy_duracion_blind_set.png)
+
+### Métricas Globales
+![Métricas globales](graficas/metricas_globales_blind_set.png)
+
+### Comparación de Modelos
+![Backbones](graficas/backbones_blind_set.png)
+
+### Matriz de Confusión - ecapa (Plate)
+![Matriz ecapa plate](graficas/matriz_confusion_spectral_ecapa_plate.png)
+
+### Matriz de Confusión - ecapa (Electrode)
+![Matriz ecapa electrode](graficas/matriz_confusion_spectral_ecapa_electrode.png)
+
+### Matriz de Confusión - ecapa (Current)
+![Matriz ecapa current](graficas/matriz_confusion_spectral_ecapa_current.png)
 
 ---
 
-## Archivos Generados
+## Conclusiones
 
-### Gráficas
-- `10seg/graficas/cv_modelos_10seg.png` - Test Set por modelo
-- `10seg/graficas/cv_resumen_10seg.png` - Test Set agrupado
-- `10seg/graficas/blind_modelos_10seg.png` - Blind Set por modelo
-- `10seg/graficas/blind_resumen_10seg.png` - Blind Set agrupado
-- `10seg/graficas/global_metrics_10seg.png` - Métricas globales
-
-### Modelos
-- `10seg/modelos/xvector/k10_overlap_0.5/` - 10 folds + SWA
-- `10seg/modelos/ecapa/k10_overlap_0.5/` - 10 folds + SWA
-- `10seg/modelos/feedforward/k10_overlap_0.5/` - 10 folds + SWA
-
-### Resultados
-- `10seg/resultados.json` - Métricas completas en formato JSON
+1. **ecapa** es el mejor modelo con 94.51% exact match
+2. **Current** es la tarea más fácil (>99% accuracy)
+3. **Plate** es la más difícil pero sigue siendo muy alta (~97%)
+4. Spectral supera significativamente a VGGish y YAMNet

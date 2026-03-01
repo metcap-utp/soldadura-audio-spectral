@@ -2,21 +2,34 @@
   {
     "timestamp": "2026-02-16T17:29:21.543174",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.5,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 1151.7495896816254,
-      "total_minutes": 19.195826494693755,
-      "cv_seconds": 1046.8842542171478,
-      "cv_minutes": 17.44807090361913,
-      "avg_per_fold_seconds": 104.68842542171478,
-      "avg_per_fold_minutes": 1.744807090361913,
-      "avg_per_epoch_seconds": 3.131989221242624
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.9659714599341384,
+        "f1": 0.9582562348802179
+      },
+      "electrode": {
+        "accuracy": 0.9681668496158068,
+        "f1": 0.9658888629771875
+      },
+      "current": {
+        "accuracy": 0.995609220636663,
+        "f1": 0.995598480968624
+      },
+      "global_metrics": {
+        "exact_match": 0.9407244785949506,
+        "hamming_accuracy": 0.9765825100622028
+      }
     },
+    "fold_training_times_seconds": [
+      152.0482738018036
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -109,7 +122,28 @@
         "accuracy_current": 0.947856315179606
       }
     ],
-    "blind_evaluation": {
+    "execution_time": {
+      "seconds": 1151.7495896816254,
+      "minutes": 19.195826494693755,
+      "hours": 0.31993044157822925
+    },
+    "training_time": {
+      "seconds": 1046.88,
+      "minutes": 17.45
+    },
+    "id": "5seg_10fold_overlap_0.5_xvector_20260228_180238"
+  },
+  {
+    "timestamp": "2026-02-18T10:15:28.845241",
+    "model_type": "xvector",
+    "backbone": "spectral-mfcc",
+    "config": {
+      "n_folds": 10,
+      "duration": 5,
+      "overlap": 0.5,
+      "seed": 42
+    },
+    "ensemble_results": {
       "plate": {
         "accuracy": 0.9659714599341384,
         "f1": 0.9582562348802179
@@ -122,34 +156,14 @@
         "accuracy": 0.995609220636663,
         "f1": 0.995598480968624
       },
-      "global": {
+      "global_metrics": {
         "exact_match": 0.9407244785949506,
         "hamming_accuracy": 0.9765825100622028
       }
     },
-    "training_time": {
-      "seconds": 1046.88,
-      "minutes": 17.45
-    }
-  },
-  {
-    "timestamp": "2026-02-18T10:15:28.845241",
-    "model_type": "xvector",
-    "config": {
-      "n_folds": 10,
-      "duration": 5,
-      "overlap": 0.5,
-      "seed": 42
-    },
-    "timing": {
-      "total_seconds": 1011.213889837265,
-      "total_minutes": 16.853564830621085,
-      "cv_seconds": 1006.039379119873,
-      "cv_minutes": 16.767322985331216,
-      "avg_per_fold_seconds": 100.6039379119873,
-      "avg_per_fold_minutes": 1.6767322985331217,
-      "avg_per_epoch_seconds": 3.0123326209387264
-    },
+    "fold_training_times_seconds": [
+      150.7141191959381
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -242,38 +256,48 @@
         "accuracy_current": 0.947856315179606
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.9659714599341384,
-        "f1": 0.9582562348802179
-      },
-      "electrode": {
-        "accuracy": 0.9681668496158068,
-        "f1": 0.9658888629771875
-      },
-      "current": {
-        "accuracy": 0.995609220636663,
-        "f1": 0.995598480968624
-      },
-      "global": {
-        "exact_match": 0.9407244785949506,
-        "hamming_accuracy": 0.9765825100622028
-      }
+    "execution_time": {
+      "seconds": 1011.213889837265,
+      "minutes": 16.853564830621085,
+      "hours": 0.28089274717701807
     },
     "training_time": {
       "seconds": 1006.04,
       "minutes": 16.77
-    }
+    },
+    "id": "5seg_10fold_overlap_0.5_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-18T10:57:10.444196",
     "model_type": "ecapa",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.5,
       "seed": 42
     },
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.973655323819978,
+        "f1": 0.9677773815664019
+      },
+      "electrode": {
+        "accuracy": 0.9780461031833151,
+        "f1": 0.9777093102331793
+      },
+      "current": {
+        "accuracy": 0.9901207464324918,
+        "f1": 0.9901016634855327
+      },
+      "global_metrics": {
+        "exact_match": 0.9517014270032931,
+        "hamming_accuracy": 0.9806073911452616
+      }
+    },
+    "fold_training_times_seconds": [
+      368.3045144081116
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -346,38 +370,43 @@
         "accuracy_current": 0.984936268829664
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.973655323819978,
-        "f1": 0.9677773815664019
-      },
-      "electrode": {
-        "accuracy": 0.9780461031833151,
-        "f1": 0.9777093102331793
-      },
-      "current": {
-        "accuracy": 0.9901207464324918,
-        "f1": 0.9901016634855327
-      },
-      "global": {
-        "exact_match": 0.9517014270032931,
-        "hamming_accuracy": 0.9806073911452616
-      }
-    },
     "training_time": {
       "seconds": 2489.81,
       "minutes": 41.5
-    }
+    },
+    "id": "5seg_10fold_overlap_0.5_ecapa_20260228_180238"
   },
   {
     "timestamp": "2026-02-18T11:04:52.420151",
     "model_type": "feedforward",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.5,
       "seed": 42
     },
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.9495060373216246,
+        "f1": 0.9410644288593145
+      },
+      "electrode": {
+        "accuracy": 0.9560922063666301,
+        "f1": 0.9562375253479388
+      },
+      "current": {
+        "accuracy": 0.9879253567508233,
+        "f1": 0.9878996373875968
+      },
+      "global_metrics": {
+        "exact_match": 0.9176728869374314,
+        "hamming_accuracy": 0.964507866813026
+      }
+    },
+    "fold_training_times_seconds": [
+      61.63689923286438
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -450,47 +479,43 @@
         "accuracy_current": 0.996523754345307
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.9495060373216246,
-        "f1": 0.9410644288593145
-      },
-      "electrode": {
-        "accuracy": 0.9560922063666301,
-        "f1": 0.9562375253479388
-      },
-      "current": {
-        "accuracy": 0.9879253567508233,
-        "f1": 0.9878996373875968
-      },
-      "global": {
-        "exact_match": 0.9176728869374314,
-        "hamming_accuracy": 0.964507866813026
-      }
-    },
     "training_time": {
       "seconds": 458.04,
       "minutes": 7.63
-    }
+    },
+    "id": "5seg_10fold_overlap_0.5_feedforward_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T17:56:33.250446",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 3,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 570.9105892181396,
-      "total_minutes": 9.515176486968993,
-      "cv_seconds": 445.3493101596832,
-      "cv_minutes": 7.422488502661387,
-      "avg_per_fold_seconds": 148.44977005322775,
-      "avg_per_fold_minutes": 2.4741628342204627,
-      "avg_per_epoch_seconds": 2.774912942891783
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.7047200878155873,
+        "f1": 0.6754526221214702
+      },
+      "electrode": {
+        "accuracy": 0.7113062568605928,
+        "f1": 0.6863673434219065
+      },
+      "current": {
+        "accuracy": 0.743139407244786,
+        "f1": 0.7325831702544031
+      },
+      "global_metrics": {
+        "exact_match": 0.5071350164654226,
+        "hamming_accuracy": 0.7197219173069888
+      }
     },
+    "fold_training_times_seconds": [
+      116.90670275688171
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -520,43 +545,44 @@
         "accuracy_current": 0.8407798537774167
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.7047200878155873,
-        "f1": 0.6754526221214702
-      },
-      "electrode": {
-        "accuracy": 0.7113062568605928,
-        "f1": 0.6863673434219065
-      },
-      "current": {
-        "accuracy": 0.743139407244786,
-        "f1": 0.7325831702544031
-      },
-      "global": {
-        "exact_match": 0.5071350164654226,
-        "hamming_accuracy": 0.7197219173069888
-      }
-    }
+    "execution_time": {
+      "seconds": 570.9105892181396,
+      "minutes": 9.515176486968993,
+      "hours": 0.15858627478281656
+    },
+    "id": "5seg_3fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T18:12:19.223053",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 5,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 941.2257151603699,
-      "total_minutes": 15.687095252672831,
-      "cv_seconds": 937.0983836650848,
-      "cv_minutes": 15.61830639441808,
-      "avg_per_fold_seconds": 187.41967673301696,
-      "avg_per_fold_minutes": 3.123661278883616,
-      "avg_per_epoch_seconds": 3.0227451551811146
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.7156970362239298,
+        "f1": 0.691538937277814
+      },
+      "electrode": {
+        "accuracy": 0.712403951701427,
+        "f1": 0.6911528492174569
+      },
+      "current": {
+        "accuracy": 0.7464324917672887,
+        "f1": 0.7358913248920365
+      },
+      "global_metrics": {
+        "exact_match": 0.5148188803512623,
+        "hamming_accuracy": 0.7248444932308818
+      }
     },
+    "fold_training_times_seconds": [
+      285.178587436676
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -604,43 +630,44 @@
         "accuracy_current": 0.8256691832532601
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.7156970362239298,
-        "f1": 0.691538937277814
-      },
-      "electrode": {
-        "accuracy": 0.712403951701427,
-        "f1": 0.6911528492174569
-      },
-      "current": {
-        "accuracy": 0.7464324917672887,
-        "f1": 0.7358913248920365
-      },
-      "global": {
-        "exact_match": 0.5148188803512623,
-        "hamming_accuracy": 0.7248444932308818
-      }
-    }
+    "execution_time": {
+      "seconds": 941.2257151603699,
+      "minutes": 15.687095252672831,
+      "hours": 0.26145158754454717
+    },
+    "id": "5seg_5fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T18:28:37.810996",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 7,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 975.4524166584015,
-      "total_minutes": 16.257540277640025,
-      "cv_seconds": 971.488641500473,
-      "cv_minutes": 16.191477358341217,
-      "avg_per_fold_seconds": 138.78409164292472,
-      "avg_per_fold_minutes": 2.3130681940487454,
-      "avg_per_epoch_seconds": 3.0852051602163333
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.6717892425905598,
+        "f1": 0.6559139871257008
+      },
+      "electrode": {
+        "accuracy": 0.6267837541163557,
+        "f1": 0.6455184454305118
+      },
+      "current": {
+        "accuracy": 0.7442371020856202,
+        "f1": 0.7336046696962966
+      },
+      "global_metrics": {
+        "exact_match": 0.48957189901207465,
+        "hamming_accuracy": 0.6809366995975119
+      }
     },
+    "fold_training_times_seconds": [
+      239.32371735572815
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -706,43 +733,44 @@
         "accuracy_current": 0.7466918714555766
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.6717892425905598,
-        "f1": 0.6559139871257008
-      },
-      "electrode": {
-        "accuracy": 0.6267837541163557,
-        "f1": 0.6455184454305118
-      },
-      "current": {
-        "accuracy": 0.7442371020856202,
-        "f1": 0.7336046696962966
-      },
-      "global": {
-        "exact_match": 0.48957189901207465,
-        "hamming_accuracy": 0.6809366995975119
-      }
-    }
+    "execution_time": {
+      "seconds": 975.4524166584015,
+      "minutes": 16.257540277640025,
+      "hours": 0.27095900462733374
+    },
+    "id": "5seg_7fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T18:58:53.704235",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 1813.1768128871918,
-      "total_minutes": 30.219613548119863,
-      "cv_seconds": 1805.6905071735382,
-      "cv_minutes": 30.094841786225636,
-      "avg_per_fold_seconds": 180.56905071735383,
-      "avg_per_fold_minutes": 3.009484178622564,
-      "avg_per_epoch_seconds": 3.244686636399077
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.677277716794731,
+        "f1": 0.6622932269396613
+      },
+      "electrode": {
+        "accuracy": 0.716794731064764,
+        "f1": 0.6925170269411679
+      },
+      "current": {
+        "accuracy": 0.743139407244786,
+        "f1": 0.7323387307390964
+      },
+      "global_metrics": {
+        "exact_match": 0.5027442371020856,
+        "hamming_accuracy": 0.712403951701427
+      }
     },
+    "fold_training_times_seconds": [
+      175.51698350906372
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -835,43 +863,44 @@
         "accuracy_current": 0.8088064889918888
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.677277716794731,
-        "f1": 0.6622932269396613
-      },
-      "electrode": {
-        "accuracy": 0.716794731064764,
-        "f1": 0.6925170269411679
-      },
-      "current": {
-        "accuracy": 0.743139407244786,
-        "f1": 0.7323387307390964
-      },
-      "global": {
-        "exact_match": 0.5027442371020856,
-        "hamming_accuracy": 0.712403951701427
-      }
-    }
+    "execution_time": {
+      "seconds": 1813.1768128871918,
+      "minutes": 30.219613548119863,
+      "hours": 0.5036602258019978
+    },
+    "id": "5seg_10fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T19:34:11.793896",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 15,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 2114.9479229450226,
-      "total_minutes": 35.24913204908371,
-      "cv_seconds": 2109.9599227905273,
-      "cv_minutes": 35.165998713175455,
-      "avg_per_fold_seconds": 140.66399485270182,
-      "avg_per_fold_minutes": 2.344399914211697,
-      "avg_per_epoch_seconds": 3.3139847720319016
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.6761800219538968,
+        "f1": 0.6595252413198919
+      },
+      "electrode": {
+        "accuracy": 0.6278814489571899,
+        "f1": 0.6468929030132474
+      },
+      "current": {
+        "accuracy": 0.7453347969264544,
+        "f1": 0.7348687841838526
+      },
+      "global_metrics": {
+        "exact_match": 0.49286498353457736,
+        "hamming_accuracy": 0.6831320892791805
+      }
     },
+    "fold_training_times_seconds": [
+      159.98423528671265
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -1009,43 +1038,44 @@
         "accuracy_current": 0.7725490196078432
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.6761800219538968,
-        "f1": 0.6595252413198919
-      },
-      "electrode": {
-        "accuracy": 0.6278814489571899,
-        "f1": 0.6468929030132474
-      },
-      "current": {
-        "accuracy": 0.7453347969264544,
-        "f1": 0.7348687841838526
-      },
-      "global": {
-        "exact_match": 0.49286498353457736,
-        "hamming_accuracy": 0.6831320892791805
-      }
-    }
+    "execution_time": {
+      "seconds": 2114.9479229450226,
+      "minutes": 35.24913204908371,
+      "hours": 0.5874855341513953
+    },
+    "id": "5seg_15fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T20:25:20.131772",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 20,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 3063.9595346450806,
-      "total_minutes": 51.065992244084676,
-      "cv_seconds": 3057.358105659485,
-      "cv_minutes": 50.95596842765808,
-      "avg_per_fold_seconds": 152.86790528297425,
-      "avg_per_fold_minutes": 2.5477984213829044,
-      "avg_per_epoch_seconds": 3.374148473364272
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.6750823271130626,
+        "f1": 0.6580797820959062
+      },
+      "electrode": {
+        "accuracy": 0.7156970362239298,
+        "f1": 0.6918181588940011
+      },
+      "current": {
+        "accuracy": 0.7453347969264544,
+        "f1": 0.7348687841838526
+      },
+      "global_metrics": {
+        "exact_match": 0.4983534577387486,
+        "hamming_accuracy": 0.7120380534211489
+      }
     },
+    "fold_training_times_seconds": [
+      190.01788544654846
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -1228,43 +1258,44 @@
         "accuracy_current": 0.7058823529411765
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.6750823271130626,
-        "f1": 0.6580797820959062
-      },
-      "electrode": {
-        "accuracy": 0.7156970362239298,
-        "f1": 0.6918181588940011
-      },
-      "current": {
-        "accuracy": 0.7453347969264544,
-        "f1": 0.7348687841838526
-      },
-      "global": {
-        "exact_match": 0.4983534577387486,
-        "hamming_accuracy": 0.7120380534211489
-      }
-    }
+    "execution_time": {
+      "seconds": 3063.9595346450806,
+      "minutes": 51.065992244084676,
+      "hours": 0.8510998707347446
+    },
+    "id": "5seg_20fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T20:55:35.460304",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.0,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 1812.6126070022583,
-      "total_minutes": 30.210210116704307,
-      "cv_seconds": 1808.2286491394043,
-      "cv_minutes": 30.137144152323405,
-      "avg_per_fold_seconds": 180.82286491394044,
-      "avg_per_fold_minutes": 3.0137144152323407,
-      "avg_per_epoch_seconds": 3.2498456629917927
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.677277716794731,
+        "f1": 0.6622932269396613
+      },
+      "electrode": {
+        "accuracy": 0.716794731064764,
+        "f1": 0.6925170269411679
+      },
+      "current": {
+        "accuracy": 0.743139407244786,
+        "f1": 0.7323387307390964
+      },
+      "global_metrics": {
+        "exact_match": 0.5027442371020856,
+        "hamming_accuracy": 0.712403951701427
+      }
     },
+    "fold_training_times_seconds": [
+      178.1262285709381
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -1357,43 +1388,44 @@
         "accuracy_current": 0.8088064889918888
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.677277716794731,
-        "f1": 0.6622932269396613
-      },
-      "electrode": {
-        "accuracy": 0.716794731064764,
-        "f1": 0.6925170269411679
-      },
-      "current": {
-        "accuracy": 0.743139407244786,
-        "f1": 0.7323387307390964
-      },
-      "global": {
-        "exact_match": 0.5027442371020856,
-        "hamming_accuracy": 0.712403951701427
-      }
-    }
+    "execution_time": {
+      "seconds": 1812.6126070022583,
+      "minutes": 30.210210116704307,
+      "hours": 0.5035035019450718
+    },
+    "id": "5seg_10fold_overlap_0.0_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T21:22:13.731937",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.25,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 1595.5324122905731,
-      "total_minutes": 26.592206871509553,
-      "cv_seconds": 1478.8141996860504,
-      "cv_minutes": 24.64690332810084,
-      "avg_per_fold_seconds": 147.88141996860503,
-      "avg_per_fold_minutes": 2.464690332810084,
-      "avg_per_epoch_seconds": 3.2418889278893004
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.7409440175631175,
+        "f1": 0.7356125792202782
+      },
+      "electrode": {
+        "accuracy": 0.8177826564215148,
+        "f1": 0.8108689262129379
+      },
+      "current": {
+        "accuracy": 0.8419319429198683,
+        "f1": 0.8403388345260698
+      },
+      "global_metrics": {
+        "exact_match": 0.672886937431394,
+        "hamming_accuracy": 0.8002195389681668
+      }
     },
+    "fold_training_times_seconds": [
+      134.29846954345703
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -1486,43 +1518,44 @@
         "accuracy_current": 0.8725376593279258
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.7409440175631175,
-        "f1": 0.7356125792202782
-      },
-      "electrode": {
-        "accuracy": 0.8177826564215148,
-        "f1": 0.8108689262129379
-      },
-      "current": {
-        "accuracy": 0.8419319429198683,
-        "f1": 0.8403388345260698
-      },
-      "global": {
-        "exact_match": 0.672886937431394,
-        "hamming_accuracy": 0.8002195389681668
-      }
-    }
+    "execution_time": {
+      "seconds": 1595.5324122905731,
+      "minutes": 26.592206871509553,
+      "hours": 0.4432034478584926
+    },
+    "id": "5seg_10fold_overlap_0.25_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T21:40:29.330023",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.5,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 1092.0815997123718,
-      "total_minutes": 18.201359995206197,
-      "cv_seconds": 1087.285311460495,
-      "cv_minutes": 18.121421857674918,
-      "avg_per_fold_seconds": 108.7285311460495,
-      "avg_per_fold_minutes": 1.8121421857674918,
-      "avg_per_epoch_seconds": 3.251471346805095
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.9659714599341384,
+        "f1": 0.9582562348802179
+      },
+      "electrode": {
+        "accuracy": 0.9681668496158068,
+        "f1": 0.9658888629771875
+      },
+      "current": {
+        "accuracy": 0.995609220636663,
+        "f1": 0.995598480968624
+      },
+      "global_metrics": {
+        "exact_match": 0.9407244785949506,
+        "hamming_accuracy": 0.9765825100622028
+      }
     },
+    "fold_training_times_seconds": [
+      151.92289543151855
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -1615,47 +1648,48 @@
         "accuracy_current": 0.947856315179606
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.9659714599341384,
-        "f1": 0.9582562348802179
-      },
-      "electrode": {
-        "accuracy": 0.9681668496158068,
-        "f1": 0.9658888629771875
-      },
-      "current": {
-        "accuracy": 0.995609220636663,
-        "f1": 0.995598480968624
-      },
-      "global": {
-        "exact_match": 0.9407244785949506,
-        "hamming_accuracy": 0.9765825100622028
-      }
+    "execution_time": {
+      "seconds": 1092.0815997123718,
+      "minutes": 18.201359995206197,
+      "hours": 0.30335599992010326
     },
     "training_time": {
       "seconds": 1087.29,
       "minutes": 18.12
-    }
+    },
+    "id": "5seg_10fold_overlap_0.5_xvector_20260228_180238"
   },
   {
     "timestamp": "2026-02-23T22:02:06.246719",
     "model_type": "xvector",
+    "backbone": "spectral-mfcc",
     "config": {
       "n_folds": 10,
       "duration": 5,
       "overlap": 0.75,
       "seed": 42
     },
-    "timing": {
-      "total_seconds": 1294.2539691925049,
-      "total_minutes": 21.570899486541748,
-      "cv_seconds": 1187.3491849899292,
-      "cv_minutes": 19.789153083165488,
-      "avg_per_fold_seconds": 118.73491849899293,
-      "avg_per_fold_minutes": 1.9789153083165487,
-      "avg_per_epoch_seconds": 3.2500256308288398
+    "ensemble_results": {
+      "plate": {
+        "accuracy": 0.9527991218441273,
+        "f1": 0.9441358696351173
+      },
+      "electrode": {
+        "accuracy": 0.9462129527991219,
+        "f1": 0.9439864490670669
+      },
+      "current": {
+        "accuracy": 0.991218441273326,
+        "f1": 0.9911988329517241
+      },
+      "global_metrics": {
+        "exact_match": 0.9110867178924259,
+        "hamming_accuracy": 0.9634101719721917
+      }
     },
+    "fold_training_times_seconds": [
+      104.54110479354858
+    ],
     "fold_results": [
       {
         "fold": 0,
@@ -1748,23 +1782,11 @@
         "accuracy_current": 0.880648899188876
       }
     ],
-    "blind_evaluation": {
-      "plate": {
-        "accuracy": 0.9527991218441273,
-        "f1": 0.9441358696351173
-      },
-      "electrode": {
-        "accuracy": 0.9462129527991219,
-        "f1": 0.9439864490670669
-      },
-      "current": {
-        "accuracy": 0.991218441273326,
-        "f1": 0.9911988329517241
-      },
-      "global": {
-        "exact_match": 0.9110867178924259,
-        "hamming_accuracy": 0.9634101719721917
-      }
-    }
+    "execution_time": {
+      "seconds": 1294.2539691925049,
+      "minutes": 21.570899486541748,
+      "hours": 0.3595149914423625
+    },
+    "id": "5seg_10fold_overlap_0.75_xvector_20260228_180238"
   }
 ]

@@ -6,4 +6,5 @@ scikit-learn
 joblib
 pyyaml
 matplotlib
-seaborn
+seaborntorch>=2.0
+tqdm

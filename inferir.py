@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from utils.audio_utils import AUDIO_BASE_DIR
 from utils.timing import Timer
+from utils.logging_utils import setup_log_file
 
 N_MFCC = 40
 
@@ -43,13 +44,13 @@ def parse_args():
 def get_model_class(model_type):
     """Retorna la clase del modelo según el tipo."""
     if model_type == "xvector":
-        from weld_audio_classifier.models.xvector import XVectorModel
+        from models.modelo_xvector import XVectorModel
         return XVectorModel
     elif model_type == "ecapa":
-        from weld_audio_classifier.models.multitask import ECAPAMultiTask
+        from models.modelo_ecapa import ECAPAMultiTask
         return ECAPAMultiTask
     elif model_type == "feedforward":
-        from weld_audio_classifier.models.multitask import FeedForwardMultiTask
+        from models.modelo_feedforward import FeedForwardMultiTask
         return FeedForwardMultiTask
     else:
         raise ValueError(f"Modelo desconocido: {model_type}")
@@ -383,6 +384,13 @@ def run_inference(duration, overlap, k_folds, model_type, device):
             "n_models": len(models),
             "n_samples": n_samples,
         },
+        # Schema canónico (compatible con vggish/yamnet)
+        "execution_time": {
+            "seconds": round(total_time, 2),
+            "minutes": round(total_time / 60, 2),
+            "hours": round(total_time / 3600, 4),
+        },
+        # Mantener timing para compatibilidad hacia atrás
         "timing": {
             "total_seconds": total_time,
         },
@@ -412,6 +420,13 @@ def run_inference(duration, overlap, k_folds, model_type, device):
 
 def main():
     args = parse_args()
+    
+    # Set up logging
+    log_file, log_path = setup_log_file(
+        Path(".") / "logs", "inferir", suffix=f"_{int(args.duration):02d}seg_{args.model}"
+    )
+    sys.stdout = log_file
+    
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     
     duration_dir = Path(f"{args.duration:02d}seg")
@@ -440,7 +455,11 @@ def main():
         
         print(f"\n{'='*60}")
         print(f"Resultados guardados en: {inferencia_path}")
+        print(f"Logs guardados en: {log_path}")
         print(f"{'='*60}")
+    
+    # Close log file
+    log_file.close()
 
 
 if __name__ == "__main__":

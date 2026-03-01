@@ -30,9 +30,10 @@ from torch.optim.swa_utils import SWALR, AveragedModel
 from torch.utils.data import DataLoader, Dataset
 
 sys.path.insert(0, str(Path(__file__).parent))
-from weld_audio_classifier.models import XVectorModel
+from models.modelo_xvector import XVectorModel
 from utils.audio_utils import AUDIO_BASE_DIR
 from utils.timing import Timer, timer
+from utils.logging_utils import setup_log_file
 
 warnings.filterwarnings("ignore")
 
@@ -442,6 +443,12 @@ def main():
     args = parse_args()
     total_start_time = time.time()
 
+    # Set up logging
+    log_file, log_path = setup_log_file(
+        Path(".") / "logs", "entrenar_xvector", suffix=f"_{int(args.duration):02d}seg"
+    )
+    sys.stdout = log_file
+
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     print("="*60)
     print("ENTRENAMIENTO X-VECTOR SMAW (Multi-Task)")
@@ -470,12 +477,13 @@ def main():
     
     # Cargar features
     print("\nCargando features desde CSVs...")
-    with Timer("Carga/Extracción Features Total"):
+    with timer("Extracción de características MFCC") as get_extraction_time:
         (X_train, y_train, sessions_train,
          X_test, y_test, sessions_test,
          X_blind, y_blind, sessions_blind) = extract_features_from_csv(
             train_csv, test_csv, blind_csv, args.duration, args.overlap, cache_path
         )
+    feature_extraction_time = get_extraction_time().seconds
     
     # Combinar train+test para K-Fold CV
     X_all = X_train + X_test  # Lista concatenada
@@ -569,15 +577,36 @@ def main():
     avg_time_per_epoch = sum(f.get('avg_epoch_time', 0) for f in fold_results) / len(fold_results) if fold_results else 0
 
     # Guardar resultados con tiempos detallados
+    # Obtener lista de fold_training_times y best_epochs para compatibilidad con vggish/yamnet
+    fold_training_times_seconds = [f['time_seconds'] for f in fold_results]
+    
     results = {
         'timestamp': datetime.now().isoformat(),
         'model_type': 'xvector',
+        'backbone': 'spectral-mfcc',  # Identificar el backbone
         'config': {
             'n_folds': args.k_folds,
             'duration': args.duration,
             'overlap': args.overlap,
             'seed': args.seed,
         },
+        # Schema canónico (compatible con vggish/yamnet)
+        'execution_time': {
+            'seconds': round(total_time, 2),
+            'minutes': round(total_time / 60, 2),
+            'hours': round(total_time / 3600, 4),
+        },
+        'training_time': {
+            'seconds': round(total_cv_time, 2),
+            'minutes': round(total_cv_time / 60, 2),
+        },
+        'feature_extraction': {
+            'from_cache': cache_path.exists() if cache_path else False,
+            'extraction_time_seconds': round(feature_extraction_time, 2),
+            'extraction_time_minutes': round(feature_extraction_time / 60, 2),
+        },
+        'fold_training_times_seconds': fold_training_times_seconds,
+        # Campos adicionales para análisis fino de tiempos
         'timing': {
             'total_seconds': total_time,
             'total_minutes': total_time / 60,
@@ -614,6 +643,10 @@ def main():
     print("="*60)
     print(f"Resultados guardados: {results_path}")
     print(f"Modelos guardados: {models_dir}")
+    print(f"Logs guardados en: {log_path}")
+    
+    # Close log file
+    log_file.close()
 
 
 if __name__ == "__main__":

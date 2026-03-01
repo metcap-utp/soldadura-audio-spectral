@@ -17,6 +17,7 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
+from utils.timing import timer
 
 import librosa
 import numpy as np
@@ -30,9 +31,10 @@ from torch.optim.swa_utils import SWALR, AveragedModel
 from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.insert(0, str(Path(__file__).parent))
-from weld_audio_classifier.models import FeedForwardMultiTask
+from models.modelo_feedforward import FeedForwardMultiTask
 from weld_audio_classifier.features import extract_mfcc_features
 from utils.audio_utils import AUDIO_BASE_DIR
+from utils.logging_utils import setup_log_file
 
 warnings.filterwarnings("ignore")
 
@@ -365,6 +367,12 @@ def evaluate_blind(models, X_blind, y_blind, le_plate, le_electrode, le_current,
 def main():
     args = parse_args()
     
+    # Set up logging
+    log_file, log_path = setup_log_file(
+        Path(".") / "logs", "entrenar_feedforward", suffix=f"_{int(args.duration):02d}seg"
+    )
+    sys.stdout = log_file
+    
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     print("="*60)
     print("ENTRENAMIENTO FEEDFORWARD SMAW (Multi-Task)")
@@ -392,11 +400,13 @@ def main():
     
     # Cargar features
     print("\nCargando features desde CSVs...")
-    (X_train, y_train, sessions_train,
-     X_test, y_test, sessions_test,
-     X_blind, y_blind, sessions_blind) = extract_features_from_csv(
-        train_csv, test_csv, blind_csv, args.duration, args.overlap, cache_path
-    )
+    with timer("Extracción de características MFCC") as get_extraction_time:
+        (X_train, y_train, sessions_train,
+         X_test, y_test, sessions_test,
+         X_blind, y_blind, sessions_blind) = extract_features_from_csv(
+            train_csv, test_csv, blind_csv, args.duration, args.overlap, cache_path
+        )
+    feature_extraction_time = get_extraction_time().seconds
     
     # Combinar train+test para K-Fold CV
     X_all = np.vstack([X_train, X_test])
@@ -423,6 +433,9 @@ def main():
     print("\n" + "="*60)
     print("K-FOLD CROSS-VALIDATION")
     print("="*60)
+    
+    start_time = time.time()  # Total execution time
+    training_start_time = time.time()  # Training-specific time
     
     skf = StratifiedGroupKFold(n_splits=args.k_folds, shuffle=True, random_state=args.seed)
     fold_results = []
@@ -490,16 +503,38 @@ def main():
         le_plate, le_electrode, le_current, device
     )
     
+    # Calcular tiempos
+    elapsed_time = time.time() - start_time
+    training_time = time.time() - training_start_time
+    fold_training_times_seconds = [f['time_seconds'] for f in fold_results]
+    
     # Guardar resultados
     results = {
         'timestamp': datetime.now().isoformat(),
         'model_type': 'feedforward',
+        'backbone': 'spectral-mfcc',  # Identificar el backbone
         'config': {
             'n_folds': args.k_folds,
             'duration': args.duration,
             'overlap': args.overlap,
             'seed': args.seed,
         },
+        # Schema canónico (compatible con vggish/yamnet)
+        'execution_time': {
+            'seconds': round(elapsed_time, 2),
+            'minutes': round(elapsed_time / 60, 2),
+            'hours': round(elapsed_time / 3600, 4),
+        },
+        'training_time': {
+            'seconds': round(training_time, 2),
+            'minutes': round(training_time / 60, 2),
+        },
+        'feature_extraction': {
+            'from_cache': cache_path.exists() if cache_path else False,
+            'extraction_time_seconds': round(feature_extraction_time, 2),
+            'extraction_time_minutes': round(feature_extraction_time / 60, 2),
+        },
+        'fold_training_times_seconds': fold_training_times_seconds,
         'fold_results': fold_results,
         'blind_evaluation': blind_results,
     }
@@ -520,6 +555,10 @@ def main():
     print("="*60)
     print(f"Resultados guardados: {results_path}")
     print(f"Modelos guardados: {models_dir}")
+    print(f"Logs guardados en: {log_path}")
+    
+    # Close log file
+    log_file.close()
 
 
 if __name__ == "__main__":
