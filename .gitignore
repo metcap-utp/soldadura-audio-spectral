@@ -94,3 +94,5 @@ inferencia.json
 *_inferencia.json
 # Carpeta de backups de migración
 backups/
+
+*.sh

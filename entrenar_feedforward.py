@@ -35,6 +35,7 @@ from models.modelo_feedforward import FeedForwardMultiTask
 from weld_audio_classifier.features import extract_mfcc_features
 from utils.audio_utils import AUDIO_BASE_DIR
 from utils.logging_utils import setup_log_file
+from utils.checkpoint import TrainingCheckpoint, setup_pause_handler, pause_requested
 
 warnings.filterwarnings("ignore")
 
@@ -435,13 +436,51 @@ def main():
     print("="*60)
     
     start_time = time.time()  # Total execution time
-    training_start_time = time.time()  # Training-specific time
-    
-    skf = StratifiedGroupKFold(n_splits=args.k_folds, shuffle=True, random_state=args.seed)
-    fold_results = []
-    trained_models = []
-    
-    for fold_idx, (train_idx, val_idx) in enumerate(skf.split(X_all, y_plate, sessions_all)):
+
+    # Prepare folds: k=1 uses original train/test split, k>=2 uses StratifiedGroupKFold
+    if args.k_folds == 1:
+        # Single train/test split without cross-validation
+        train_idx = np.arange(len(X_train))
+        val_idx = np.arange(len(X_train), len(X_all))
+        fold_splits = [(train_idx, val_idx)]
+    else:
+        skf = StratifiedGroupKFold(n_splits=args.k_folds, shuffle=True, random_state=args.seed)
+        fold_splits = list(skf.split(X_all, y_plate, sessions_all))
+
+    # Checkpoint: soporte de pausa/reanudación por fold
+    setup_pause_handler()
+    ckpt = TrainingCheckpoint(models_dir)
+    ckpt_state = ckpt.load()
+
+    if ckpt_state:
+        start_fold = len(ckpt_state["completed_folds"])
+        fold_results = list(ckpt_state["fold_results"])
+        _pause_count = ckpt_state.get("pause_count", 0)
+        _resumed_from_fold = start_fold
+        # Recargar modelos ya entrenados para el ensemble
+        trained_models = []
+        for fi in ckpt_state["completed_folds"]:
+            m = FeedForwardMultiTask(
+                input_size=240,
+                hidden_sizes=[512, 256, 128],
+                num_classes_plate=len(le_plate.classes_),
+                num_classes_electrode=len(le_electrode.classes_),
+                num_classes_current=len(le_current.classes_)
+            ).to(device)
+            m.load_state_dict(torch.load(models_dir / f"model_fold_{fi}.pt"))
+            trained_models.append(m)
+        print(f"[RESUME] Resumiendo desde fold {start_fold + 1}/{args.k_folds}")
+    else:
+        ckpt_state = ckpt.initialize()
+        start_fold = 0
+        fold_results = []
+        trained_models = []
+        _pause_count = 0
+        _resumed_from_fold = None
+
+    for fold_idx, (train_idx, val_idx) in enumerate(fold_splits):
+        if fold_idx < start_fold:
+            continue
         print(f"\nFold {fold_idx + 1}/{args.k_folds}")
         
         X_tr, X_val = X_all[train_idx], X_all[val_idx]
@@ -484,18 +523,24 @@ def main():
         # Guardar para ensemble
         trained_models.append(model)
         
-        fold_results.append({
+        fold_result = {
             'fold': fold_idx,
             'time_seconds': fold_time,
             'accuracy_plate': metrics['accuracy_plate'],
             'accuracy_electrode': metrics['accuracy_electrode'],
             'accuracy_current': metrics['accuracy_current'],
-        })
+        }
+        fold_results.append(fold_result)
         
         print(f"  Acc Plate: {metrics['accuracy_plate']:.4f}")
         print(f"  Acc Electrode: {metrics['accuracy_electrode']:.4f}")
         print(f"  Acc Current: {metrics['accuracy_current']:.4f}")
         print(f"  Time: {fold_time:.1f}s")
+        ckpt.save_fold(ckpt_state, fold_idx, fold_result, fold_time)
+        if pause_requested():
+            ckpt.mark_paused(ckpt_state)
+            print(f"[PAUSE] Pausado después del fold {fold_idx + 1}/{args.k_folds}. Re-ejecuta el mismo comando para continuar.")
+            sys.exit(0)
     
     # Evaluar en blind
     blind_results = evaluate_blind(
@@ -505,8 +550,8 @@ def main():
     
     # Calcular tiempos
     elapsed_time = time.time() - start_time
-    training_time = time.time() - training_start_time
     fold_training_times_seconds = [f['time_seconds'] for f in fold_results]
+    training_time = sum(fold_training_times_seconds)  # Sum of fold times (excludes paused time)
     
     # Guardar resultados
     results = {
@@ -514,7 +559,7 @@ def main():
         'model_type': 'feedforward',
         'backbone': 'spectral-mfcc',  # Identificar el backbone
         'config': {
-            'n_folds': args.k_folds,
+            'k_folds': args.k_folds,
             'duration': args.duration,
             'overlap': args.overlap,
             'seed': args.seed,
@@ -537,6 +582,11 @@ def main():
         'fold_training_times_seconds': fold_training_times_seconds,
         'fold_results': fold_results,
         'blind_evaluation': blind_results,
+        'pause_resume': {
+            'was_paused': ckpt_state.get('was_paused', False),
+            'pause_count': _pause_count,
+            'resumed_from_fold': _resumed_from_fold,
+        },
     }
     
     results_path = duration_dir / "resultados.json"
@@ -549,6 +599,8 @@ def main():
     
     all_results.append(results)
     results_path.write_text(json.dumps(all_results, indent=2))
+
+    ckpt.delete()
     
     print("\n" + "="*60)
     print("ENTRENAMIENTO COMPLETADO")

@@ -411,9 +411,9 @@ def run_inference(duration, overlap, k_folds, model_type, device):
     print(f"  Hamming Accuracy: {metrics['global']['hamming_accuracy']:.4f}")
     print(f"  Tiempo total: {total_time:.1f}s")
     
-    matrices_dir = duration_dir / "matrices_confusion"
-    save_confusion_matrix_plot(confusion_matrices, matrices_dir, model_type, label_encoders)
-    print(f"  Matrices guardadas en: {matrices_dir}")
+    metricas_dir = duration_dir / "metricas"
+    save_confusion_matrix_plot(confusion_matrices, metricas_dir, model_type, label_encoders)
+    print(f"  Matrices guardadas en: {metricas_dir}")
     
     return results
 
