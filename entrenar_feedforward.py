@@ -32,7 +32,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.insert(0, str(Path(__file__).parent))
 from models.modelo_feedforward import FeedForwardMultiTask
-from weld_audio_classifier.features import extract_mfcc_features
+from utils.features import extract_mfcc_features
 from utils.audio_utils import AUDIO_BASE_DIR
 from utils.logging_utils import setup_log_file
 from utils.checkpoint import TrainingCheckpoint, setup_pause_handler, pause_requested

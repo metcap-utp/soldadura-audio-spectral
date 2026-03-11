@@ -1,4 +1,4 @@
-"""Extracción de características MFCC con caching."""
+"""MFCC feature extraction with caching."""
 
 import hashlib
 import pickle
@@ -111,7 +111,6 @@ def load_features_cache(
         with open(cache_path, "rb") as f:
             cache_data = pickle.load(f)
         
-        # Verificar hash
         current_hash = compute_features_hash(audio_paths, segment_indices, segment_duration, overlap_ratio, n_mfcc)
         if cache_data.get("hash") != current_hash:
             print("  [CACHE] Hash no coincide, regenerando features...")

@@ -25,7 +25,7 @@ python generar_splits.py --duration 1 --overlap 0.0
 python entrenar_xvector.py --duration 1 --overlap 0.0 --k-folds 2
 
 # Verify imports work
-python -c "from weld_audio_classifier.models import XVectorModel, ECAPAMultiTask, FeedForwardMultiTask; print('OK')"
+python -c "from models.modelo_xvector import XVectorModel; from models.modelo_ecapa import ECAPAMultiTask; from models.modelo_feedforward import FeedForwardMultiTask; print('OK')"
 
 # Visualization scripts
 python scripts/graficar_folds.py 10seg --save
@@ -101,10 +101,9 @@ cat logs/entrenar_xvector_10seg_20250228_143000.log
 ## Project Structure
 
 - `models/` - Model definitions (modelo_xvector.py, modelo_ecapa.py, modelo_feedforward.py)
-  - Re-exports from `weld_audio_classifier.models` for consistency with vggish and yamnet backbones
+  - Contains direct model implementations (no re-exports)
 - `logs/` - Training and inference log files
-- `utils/` - Utilities (audio_utils.py, timing.py, logging_utils.py)
-- `weld_audio_classifier/` - Main package with models, features, and utilities
+- `utils/` - Utilities (audio_utils.py, features.py, timing.py, logging_utils.py)
 - `{N}seg/` - Results per segment duration
   - `modelos/{architecture}/k{K}_overlap_{ratio}/` - Trained model checkpoints
   - `resultados.json` - Training metrics (cumulative)
@@ -146,7 +145,7 @@ import torch.nn as nn
 from sklearn.metrics import accuracy_score
 
 # 3. Local
-from weld_audio_classifier.models import XVectorModel
+from models.modelo_xvector import XVectorModel
 from utils.audio_utils import AUDIO_BASE_DIR
 ```
 
@@ -261,7 +260,7 @@ Format: `<tipo>: <descripción>`. Types: `Agrega`, `Arregla`, `Organiza`, `Actua
 | `entrenar_feedforward.py`       | FeedForward training           |
 | `inferir.py`                    | Inference with ensemble voting |
 | `generar_splits.py`             | Stratified split generation    |
-| `weld_audio_classifier/models/` | Model architectures            |
+| `models/modelo_*.py`         | Model architectures            |
 | `utils/audio_utils.py`          | Audio loading utilities        |
 
 ## Git Ignore

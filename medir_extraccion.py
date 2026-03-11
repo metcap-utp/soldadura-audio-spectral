@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent))
-from weld_audio_classifier.features import extract_mfcc_features
+from utils.features import extract_mfcc_features
 from utils.audio_utils import AUDIO_BASE_DIR
 
 warnings.filterwarnings("ignore")
