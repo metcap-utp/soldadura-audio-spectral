@@ -21,12 +21,20 @@
 \tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
 \tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
 
-\node[canvas is zy plane at x=0] (input) at (0,0,0) {\includegraphics[width=10cm,height=10cm]{input}};
-
-\pic[shift={(2.5,0,0)}] at (input-east) 
+\pic[shift={(0,0,0)}] at (0,0,0)
+    {Box={
+        name=spectral_mfcc,
+        caption={\parbox{2.8cm}{\centering\small\textbf{Spectral-MFCC}\\\footnotesize 1$\times$240}},
+        fill=\ConvColor,
+        height=30,
+        width=3,
+        depth=30
+        }
+    };
+\pic[shift={(2.5,0,0)}] at (spectral_mfcc-east) 
     {RightBandedBox={
         name=fc1,
-        caption={\parbox{2.5cm}{\centering\small\textbf{FC-1}\footnotesize 240$\\times$512\\BN + ReLU}},
+        caption={\parbox{2.5cm}{\centering\small\textbf{FC-1}\\\footnotesize 240$\times$512\\\footnotesize BN+ReLU+Drop}},
         fill=\FcColor,
         bandfill=\FcReluColor,
         height=40,
@@ -35,12 +43,12 @@
         }
     };
 
-\draw [connection]  (input-east)    -- node {\midarrow} (fc1-west);
+\draw [connection]  (spectral_mfcc-east)    -- node {\midarrow} (fc1-west);
 
 \pic[shift={(2.5,0,0)}] at (fc1-east) 
     {RightBandedBox={
         name=fc2,
-        caption={\parbox{2.5cm}{\centering\small\textbf{FC-2}\footnotesize 512$\\times$256\\BN + ReLU}},
+        caption={\parbox{2.5cm}{\centering\small\textbf{FC-2}\\\footnotesize 512$\times$256\\\footnotesize BN+ReLU+Drop}},
         fill=\FcColor,
         bandfill=\FcReluColor,
         height=32,
@@ -54,7 +62,7 @@
 \pic[shift={(2.5,0,0)}] at (fc2-east) 
     {RightBandedBox={
         name=fc3,
-        caption={\parbox{2.5cm}{\centering\small\textbf{FC-3}\footnotesize 256$\\times$128\\BN + ReLU}},
+        caption={\parbox{2.5cm}{\centering\small\textbf{FC-3}\\\footnotesize 256$\times$128\\\footnotesize BN+ReLU+Drop}},
         fill=\FcColor,
         bandfill=\FcReluColor,
         height=28,
@@ -65,18 +73,38 @@
 
 \draw [connection]  (fc2-east)    -- node {\midarrow} (fc3-west);
 
-\pic[shift={(2.5,0,0)}] at (fc3-east) 
+\pic[shift={(4.5,5.0,0)}] at (fc3-east) 
     {Box={
-        name=classifier,
-        caption={\parbox{2cm}{\centering\small\textbf{Clasificador}\footnotesize 128$\\times$C}},
+        name=head_espesor,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Espesor}\\\footnotesize 128$\times$3}},
         fill=\SoftmaxColor,
-        height=18,
+        height=12,
         width=2,
-        depth=18
+        depth=12
         }
     };
 
-\draw [connection]  (fc3-east)    -- node {\midarrow} (classifier-west);
+\pic[shift={(4.5,0,0)}] at (fc3-east) 
+    {Box={
+        name=head_electrodo,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Electrodo}\\\footnotesize 128$\times$4}},
+        fill=\SoftmaxColor,
+        height=14,
+        width=2,
+        depth=14
+        }
+    };
 
+\pic[shift={(4.5,-5.0,0)}] at (fc3-east) 
+    {Box={
+        name=head_corriente,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Corriente}\\\footnotesize 128$\times$2}},
+        fill=\SoftmaxColor,
+        height=10,
+        width=2,
+        depth=10
+        }
+    };
+\draw [connection]  (fc3-east) -- node {\midarrow} (head_espesor-west);\draw [connection]  (fc3-east) -- node {\midarrow} (head_electrodo-west);\draw [connection]  (fc3-east) -- node {\midarrow} (head_corriente-west);
 \end{tikzpicture}
 \end{document}

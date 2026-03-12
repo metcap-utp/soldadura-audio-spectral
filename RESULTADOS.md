@@ -100,38 +100,78 @@
 
 ## Gráficas
 
+Las siguientes gráficas muestran el rendimiento de evaluación sobre el conjunto ciego usando métricas globales y por tarea según la duración del segmento de audio. El modelo evaluado pertenece únicamente a la arquitectura probada.
+
 ### Accuracy por duración
 
-![Accuracy por duración](graficas/accuracy_duracion_blind_set.png)
+![Accuracy por duración](graficas/accuracy_vs_duracion.png)
 
 ### F1-score por duración
 
-![F1 por duración](graficas/f1_duracion_blind_set.png)
+![F1-score por duración](graficas/f1_vs_duracion.png)
 
-### Métricas globales (Exact Match y Hamming)
+### Métricas globales (Exact Match y Hamming Accuracy)
 
-![Métricas globales](graficas/metricas_globales_blind_set.png)
+![Métricas globales](graficas/metricas_globales.png)
 
-### Comparación por backbone
+---
 
-![Backbones](graficas/backbones_blind_set.png)
+### Tiempos de extracción de características por duración
 
-### Comparación por k-folds
+Tiempo de extracción total y por archivo según duración del segmento:
 
-![K-folds](graficas/k_comparison_all_projects.png)
-
-### Comparación por overlap
-
-![Overlap](graficas/overlap_comparison_all_projects.png)
-
-### Tiempos de extracción
+| Duración | Tiempo total (s) | Segmentos | ms/archivo |
+| :------: | :--------------: | :-------: | :--------: |
+|   1 s    |      337.14      |  43 170   |    7.81    |
+|   2 s    |      221.22      |  21 313   |   10.38    |
+|   5 s    |      95.20       |   8 185   |   11.63    |
+|   10 s   |      59.74       |   3 819   |   15.64    |
+|   20 s   |      29.38       |   1 640   |   17.91    |
+|   30 s   |      19.77       |    918    |   21.54    |
+|   50 s   |      15.73       |    448    |   35.11    |
 
 ![Extracción por duración](graficas/tiempo_extraction_duracion.png)
 
-### Tiempos de entrenamiento
+### Tiempos de entrenamiento por duración
+
+Tiempo de entrenamiento (k=10, overlap=0.5) por arquitectura según duración del segmento:
+
+| Duración | X-Vector (s) | ECAPA-TDNN (s) | Feedforward (s) | X-Vector (min) | ECAPA-TDNN (min) | Feedforward (min) |
+| :------: | :----------: | :------------: | :-------------: | :------------: | :--------------: | :---------------: |
+|   1 s    |    404.0     |     2465.8     |      151.3      |      6.73      |      41.10       |       2.52        |
+|   2 s    |    238.8     |     402.7      |      85.0       |      3.98      |       6.71       |       1.42        |
+|   5 s    |    454.7     |     368.3      |      534.5      |      7.58      |       6.14       |       8.91        |
+|   10 s   |    269.7     |     310.5      |      40.8       |      4.50      |       5.18       |       0.68        |
+|   20 s   |    108.0     |     127.0      |      263.5      |      1.80      |       2.12       |       4.39        |
+|   30 s   |     59.4     |      67.5      |      60.0       |      0.99      |       1.13       |       1.00        |
+|   50 s   |     53.4     |      54.5      |      48.7       |      0.89      |       0.91       |       0.81        |
 
 ![Entrenamiento por duración](graficas/tiempo_training_duracion.png)
 
-### Tiempos de inferencia
+### Tiempos de entrenamiento vs k (5 s, overlap=0.5)
+
+Tiempo de entrenamiento por arquitectura para Study 2 (duración fija 5 s), usando datos de `resultados.json`.
+
+|  k  | X-Vector (s) | ECAPA-TDNN (s) | Feedforward (s) | X-Vector (min) | ECAPA-TDNN (min) | Feedforward (min) |
+| :-: | :----------: | :------------: | :-------------: | :------------: | :--------------: | :---------------: |
+|  1  |    149.07    |     236.71     |      43.25      |      2.48      |       3.95       |       0.72        |
+|  3  |    316.14    |     831.28     |     159.64      |      5.27      |      13.85       |       2.66        |
+|  5  |    511.96    |    1326.60     |     277.55      |      8.53      |      22.11       |       4.63        |
+|  7  |    727.19    |    2335.74     |     354.51      |     12.12      |      38.93       |       5.91        |
+| 10  |   1087.29    |    2489.81     |     535.21      |     18.12      |      41.50       |       8.92        |
+| 15  |   1455.47    |    3648.21     |     634.33      |     24.26      |      60.80       |       10.57       |
+| 20  |   1757.73    |    5047.27     |     885.41      |     29.30      |      84.12       |       14.76       |
+
+![Entrenamiento vs k](graficas/tiempo_training_k_05seg.png)
+
+### Tiempos de inferencia por archivo (5 s, k=10, overlap=0.5)
+
+Tiempo de inferencia sobre el conjunto ciego en segmentos de 5 s:
+
+| Arquitectura | Tiempo total (s) | s/archivo | ms/archivo |
+| ------------ | :--------------: | :-------: | :--------: |
+| X-Vector     |      22.91       |   0.025   |   25.15    |
+| ECAPA-TDNN   |      97.03       |   0.107   |   106.50   |
+| Feedforward  |       9.79       |   0.011   |   10.74    |
 
 ![Inferencia por archivo](graficas/tiempo_inferencia_archivo_05seg.png)
