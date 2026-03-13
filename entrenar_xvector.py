@@ -628,7 +628,7 @@ def main():
     results = {
         'timestamp': datetime.now().isoformat(),
         'model_type': 'xvector',
-        'backbone': 'spectral-mfcc',  # Identificar el backbone
+        'approach': 'spectral-mfcc',  # Identificar el enfoque
         'config': {
             'k_folds': args.k_folds,
             'duration': args.duration,

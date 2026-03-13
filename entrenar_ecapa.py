@@ -780,7 +780,7 @@ def main():
         "id": f"{int(args.duration)}seg_{args.k_folds}fold_overlap_{args.overlap}_ecapa_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         "timestamp": datetime.now().isoformat(),
         "model_type": "ecapa",
-        "backbone": "spectral-mfcc",
+        "approach": "spectral-mfcc",
         "execution_time": {
             "seconds": round(elapsed_time, 2),
             "minutes": round(elapsed_minutes, 2),

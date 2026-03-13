@@ -199,7 +199,7 @@ arch = [
     to_head("/home/luis/PlotNeuralNet/"),
     to_cor(),
     to_begin(),
-    # Spectral-MFCC backbone
+    # Spectral-MFCC approach
     to_Backbone(
         name="spectral_mfcc",
         caption=r"{\parbox{2.8cm}{\centering\small\textbf{Spectral-MFCC}\\\footnotesize 1$\times$1$\times$240}}",

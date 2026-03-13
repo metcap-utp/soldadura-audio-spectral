@@ -21,7 +21,7 @@ def migrate_vggish_result(old_entry):
     new_entry = {
         "timestamp": old_entry.get("timestamp", datetime.now().isoformat()),
         "model_type": old_entry.get("model_type", "unknown"),
-        "backbone": "vggish",
+        "approach": "vggish",
     }
     
     # Mapear configuración
@@ -75,7 +75,7 @@ def migrate_spectral_result(old_entry):
     new_entry = {
         "timestamp": old_entry.get("timestamp", datetime.now().isoformat()),
         "model_type": old_entry.get("model_type", "unknown"),
-        "backbone": "spectral-mfcc",
+        "approach": "spectral-mfcc",
     }
     
     # Mapear configuración

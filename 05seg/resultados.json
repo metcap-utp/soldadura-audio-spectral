@@ -3,7 +3,7 @@
     "id": "5seg_10fold_overlap_0.5_xvector_20260228_180238",
     "timestamp": "2026-02-16T17:29:21.543174",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -137,7 +137,7 @@
     "id": "5seg_10fold_overlap_0.5_xvector_20260228_180238",
     "timestamp": "2026-02-18T10:15:28.845241",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -271,7 +271,7 @@
     "id": "5seg_10fold_overlap_0.5_ecapa_20260228_180238",
     "timestamp": "2026-02-18T10:57:10.444196",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -380,7 +380,7 @@
     "id": "5seg_10fold_overlap_0.5_feedforward_20260228_180238",
     "timestamp": "2026-02-18T11:04:52.420151",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -489,7 +489,7 @@
     "id": "5seg_3fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T17:56:33.250446",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -556,7 +556,7 @@
     "id": "5seg_5fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T18:12:19.223053",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -641,7 +641,7 @@
     "id": "5seg_7fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T18:28:37.810996",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -744,7 +744,7 @@
     "id": "5seg_10fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T18:58:53.704235",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -874,7 +874,7 @@
     "id": "5seg_15fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T19:34:11.793896",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -1049,7 +1049,7 @@
     "id": "5seg_20fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T20:25:20.131772",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -1269,7 +1269,7 @@
     "id": "5seg_10fold_overlap_0.0_xvector_20260228_180238",
     "timestamp": "2026-02-23T20:55:35.460304",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -1399,7 +1399,7 @@
     "id": "5seg_10fold_overlap_0.25_xvector_20260228_180238",
     "timestamp": "2026-02-23T21:22:13.731937",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.25,
@@ -1529,7 +1529,7 @@
     "id": "5seg_10fold_overlap_0.5_xvector_20260228_180238",
     "timestamp": "2026-02-23T21:40:29.330023",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -1663,7 +1663,7 @@
     "id": "5seg_10fold_overlap_0.75_xvector_20260228_180238",
     "timestamp": "2026-02-23T22:02:06.246719",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.75,
@@ -1793,7 +1793,7 @@
     "id": "5seg_1fold_overlap_0.5_ecapa_20260228_224409",
     "timestamp": "2026-02-28T22:44:09.098465",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -2333,7 +2333,7 @@
     "id": "5seg_1fold_overlap_0.5_ecapa_20260228_230642",
     "timestamp": "2026-02-28T23:06:42.136204",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -2872,7 +2872,7 @@
   {
     "timestamp": "2026-03-01T03:08:01.989394",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -2929,7 +2929,7 @@
   {
     "timestamp": "2026-03-01T03:13:23.828405",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -3006,7 +3006,7 @@
   {
     "timestamp": "2026-03-01T03:22:01.650466",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -3103,7 +3103,7 @@
   {
     "timestamp": "2026-03-01T03:34:14.981923",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -3220,7 +3220,7 @@
   {
     "timestamp": "2026-03-01T03:58:38.744051",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -3417,7 +3417,7 @@
   {
     "timestamp": "2026-03-01T04:28:07.468162",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -3665,7 +3665,7 @@
     "id": "5seg_3fold_overlap_0.5_ecapa_20260304_000620",
     "timestamp": "2026-03-04T00:06:20.922164",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -5433,7 +5433,7 @@
     "id": "5seg_5fold_overlap_0.5_ecapa_20260304_002916",
     "timestamp": "2026-03-04T00:29:16.099529",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -7985,7 +7985,7 @@
     "id": "5seg_7fold_overlap_0.5_ecapa_20260304_010901",
     "timestamp": "2026-03-04T01:09:01.842548",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -12125,7 +12125,7 @@
     "id": "5seg_15fold_overlap_0.5_ecapa_20260304_021542",
     "timestamp": "2026-03-04T02:15:42.027409",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -18741,7 +18741,7 @@
     "id": "5seg_20fold_overlap_0.5_ecapa_20260304_033118",
     "timestamp": "2026-03-04T03:31:18.568714",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -26471,7 +26471,7 @@
     "id": "5seg_10fold_overlap_0.0_ecapa_20260304_043004",
     "timestamp": "2026-03-04T04:30:04.077707",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -32189,7 +32189,7 @@
     "id": "5seg_10fold_overlap_0.25_ecapa_20260304_052325",
     "timestamp": "2026-03-04T05:23:25.815838",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.25,
@@ -37499,7 +37499,7 @@
     "id": "5seg_10fold_overlap_0.75_ecapa_20260304_060907",
     "timestamp": "2026-03-04T06:09:07.893330",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.75,
@@ -42232,7 +42232,7 @@
   {
     "timestamp": "2026-03-04T11:40:07.764364",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -42287,7 +42287,7 @@
   {
     "timestamp": "2026-03-04T11:43:21.015496",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -42358,7 +42358,7 @@
   {
     "timestamp": "2026-03-04T11:48:44.541624",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -42445,7 +42445,7 @@
   {
     "timestamp": "2026-03-04T11:55:12.822171",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -42548,7 +42548,7 @@
   {
     "timestamp": "2026-03-04T12:07:27.023368",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -42715,7 +42715,7 @@
   {
     "timestamp": "2026-03-04T12:23:14.413889",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -42922,7 +42922,7 @@
   {
     "timestamp": "2026-03-04T12:31:53.042414",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.0,
@@ -43049,7 +43049,7 @@
   {
     "timestamp": "2026-03-04T12:41:42.729580",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.25,
@@ -43176,7 +43176,7 @@
   {
     "timestamp": "2026-03-04T12:50:53.923248",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.75,
@@ -43303,7 +43303,7 @@
   {
     "timestamp": "2026-03-04T13:42:34.858419",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 5,
       "overlap": 0.5,
@@ -43431,7 +43431,7 @@
     "id": "5seg_3fold_overlap_0.5_ecapa_20260305_143615",
     "timestamp": "2026-03-05T14:36:15.450682",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 476.59,
       "minutes": 7.94,
@@ -45001,7 +45001,7 @@
     "id": "5seg_5fold_overlap_0.5_ecapa_20260305_145919",
     "timestamp": "2026-03-05T14:59:19.076307",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 1374.27,
       "minutes": 22.9,
@@ -47559,7 +47559,7 @@
     "id": "5seg_7fold_overlap_0.5_ecapa_20260305_153851",
     "timestamp": "2026-03-05T15:38:51.039930",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 2366.27,
       "minutes": 39.44,
@@ -51705,7 +51705,7 @@
     "id": "5seg_3fold_overlap_0.5_ecapa_20260306_015520",
     "timestamp": "2026-03-06T01:55:20.527291",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 839.04,
       "minutes": 13.98,
@@ -53479,7 +53479,7 @@
     "id": "5seg_5fold_overlap_0.5_ecapa_20260306_021745",
     "timestamp": "2026-03-06T02:17:45.246344",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 1335.19,
       "minutes": 22.25,
@@ -56037,7 +56037,7 @@
     "id": "5seg_7fold_overlap_0.5_ecapa_20260306_025658",
     "timestamp": "2026-03-06T02:56:58.288315",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 2347.64,
       "minutes": 39.13,
@@ -60183,7 +60183,7 @@
     "id": "5seg_15fold_overlap_0.5_ecapa_20260306_030617",
     "timestamp": "2026-03-06T03:06:17.644226",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 554.11,
       "minutes": 9.24,
@@ -66517,7 +66517,7 @@
     "id": "5seg_20fold_overlap_0.5_ecapa_20260306_042348",
     "timestamp": "2026-03-06T04:23:48.339274",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 4645.55,
       "minutes": 77.43,
@@ -75021,7 +75021,7 @@
     "id": "5seg_10fold_overlap_0.0_ecapa_20260306_052323",
     "timestamp": "2026-03-06T05:23:23.230561",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 3569.54,
       "minutes": 59.49,
@@ -80745,7 +80745,7 @@
     "id": "5seg_10fold_overlap_0.25_ecapa_20260306_061624",
     "timestamp": "2026-03-06T06:16:24.126724",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 3175.23,
       "minutes": 52.92,
@@ -86061,7 +86061,7 @@
     "id": "5seg_10fold_overlap_0.75_ecapa_20260306_070214",
     "timestamp": "2026-03-06T07:02:14.301075",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "execution_time": {
       "seconds": 2744.64,
       "minutes": 45.74,
@@ -90800,7 +90800,7 @@
   {
     "timestamp": "2026-03-06T07:03:06.123816",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 1,
       "duration": 5,
@@ -90860,7 +90860,7 @@
   {
     "timestamp": "2026-03-06T07:05:48.930353",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 3,
       "duration": 5,
@@ -90936,7 +90936,7 @@
   {
     "timestamp": "2026-03-06T07:10:32.606096",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 5,
       "duration": 5,
@@ -91028,7 +91028,7 @@
   {
     "timestamp": "2026-03-06T07:16:33.088478",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 7,
       "duration": 5,
@@ -91136,7 +91136,7 @@
   {
     "timestamp": "2026-03-06T07:27:10.889477",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 15,
       "duration": 5,
@@ -91308,7 +91308,7 @@
   {
     "timestamp": "2026-03-06T07:41:59.973443",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 20,
       "duration": 5,
@@ -91520,7 +91520,7 @@
   {
     "timestamp": "2026-03-06T07:49:18.955972",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 10,
       "duration": 5,
@@ -91652,7 +91652,7 @@
   {
     "timestamp": "2026-03-06T07:58:33.526546",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 10,
       "duration": 5,
@@ -91784,7 +91784,7 @@
   {
     "timestamp": "2026-03-06T08:06:57.443444",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "k_folds": 10,
       "duration": 5,

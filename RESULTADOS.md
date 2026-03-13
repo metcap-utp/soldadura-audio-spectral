@@ -1,6 +1,6 @@
 # Spectral Analysis — Resultados (Blind Set)
 
-**Backbone:** MFCC (características espectrales)  
+**Enfoque:** MFCC (características espectrales)  
 **Configuración:** k-fold = 10, overlap = 0.5  
 **Datos:** `inferencia.json` (conjunto ciego)
 
@@ -163,6 +163,19 @@ Tiempo de entrenamiento por arquitectura para Study 2 (duración fija 5 s), usan
 | 20  |   1757.73    |    5047.27     |     885.41      |     29.30      |      84.12       |       14.76       |
 
 ![Entrenamiento vs k](graficas/tiempo_training_k_05seg.png)
+
+### Tiempos de entrenamiento vs overlap (5 s, k=10)
+
+Tiempo de entrenamiento por arquitectura para Study 3 (duracion fija 5 s, k=10), usando datos de `resultados.json`.
+
+| Overlap | X-Vector (s) | ECAPA-TDNN (s) | Feedforward (s) | X-Vector (min) | ECAPA-TDNN (min) | Feedforward (min) |
+| :-----: | :----------: | :------------: | :-------------: | :------------: | :--------------: | :---------------: |
+|    0    |    178.13    |    3557.94     |     435.60      |      2.97      |      59.30       |       7.26        |
+|  0.25   |    134.30    |    3160.32     |     551.16      |      2.24      |      52.67       |       9.19        |
+|   0.5   |   1087.29    |    2489.81     |     535.21      |     18.12      |      41.50       |       8.92        |
+|  0.75   |    104.54    |    2733.12     |     500.67      |      1.74      |      45.55       |       8.34        |
+
+![Entrenamiento vs overlap](graficas/tiempo_training_overlap_05seg.png)
 
 ### Tiempos de inferencia por archivo (5 s, k=10, overlap=0.5)
 

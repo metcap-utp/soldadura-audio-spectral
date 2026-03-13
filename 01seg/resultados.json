@@ -3,7 +3,7 @@
     "id": "1seg_10fold_overlap_0.5_xvector_20260228_180238",
     "timestamp": "2026-02-16T16:27:28.644629",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 1,
       "overlap": 0.5,
@@ -137,7 +137,7 @@
     "id": "1seg_10fold_overlap_0.5_ecapa_20260228_180238",
     "timestamp": "2026-02-17T07:16:21.944598",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 1,
       "overlap": 0.5,
@@ -246,7 +246,7 @@
     "id": "1seg_10fold_overlap_0.5_xvector_20260228_180238",
     "timestamp": "2026-02-18T03:34:28.987359",
     "model_type": "xvector",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 1,
       "overlap": 0.5,
@@ -380,7 +380,7 @@
     "id": "1seg_10fold_overlap_0.5_ecapa_20260228_180238",
     "timestamp": "2026-02-18T06:58:15.940590",
     "model_type": "ecapa",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 1,
       "overlap": 0.5,
@@ -489,7 +489,7 @@
     "id": "1seg_10fold_overlap_0.5_feedforward_20260228_180238",
     "timestamp": "2026-02-18T07:49:55.822319",
     "model_type": "feedforward",
-    "backbone": "spectral-mfcc",
+    "approach": "spectral-mfcc",
     "config": {
       "duration": 1,
       "overlap": 0.5,

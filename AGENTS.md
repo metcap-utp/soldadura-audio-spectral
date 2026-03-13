@@ -70,7 +70,7 @@ Log files contain:
 - All script output (print statements)
 - Training metrics (loss, accuracy per fold)
 - Execution times (total, per-fold, feature extraction)
-- Backbone information (vggish, yamnet, spectral-mfcc)
+- Approach information (vggish, yamnet, spectral-mfcc)
 - Any errors or warnings during execution
 
 ### Log Management
