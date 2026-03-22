@@ -86,15 +86,15 @@
 
 ### Plate (Espesor de placa)
 
-![Confusion Plate](graficas/ecapa_plate_confusion.png)
+![Confusion Plate](./graficas/ecapa_plate_confusion.png)
 
 ### Electrode (Tipo de electrodo)
 
-![Confusion Electrode](graficas/ecapa_electrode_confusion.png)
+![Confusion Electrode](./graficas/ecapa_electrode_confusion.png)
 
 ### Current (Tipo de corriente)
 
-![Confusion Current](graficas/ecapa_current_confusion.png)
+![Confusion Current](./graficas/ecapa_current_confusion.png)
 
 ---
 
@@ -104,15 +104,15 @@ Las siguientes gráficas muestran el rendimiento de evaluación sobre el conjunt
 
 ### Accuracy por duración
 
-![Accuracy por duración](graficas/accuracy_vs_duracion.png)
+![Accuracy por duración](./graficas/accuracy_vs_duracion.png)
 
 ### F1-score por duración
 
-![F1-score por duración](graficas/f1_vs_duracion.png)
+![F1-score por duración](./graficas/f1_vs_duracion.png)
 
 ### Métricas globales (Exact Match y Hamming Accuracy)
 
-![Métricas globales](graficas/metricas_globales.png)
+![Métricas globales](./graficas/metricas_globales.png)
 
 ---
 
@@ -130,7 +130,7 @@ Tiempo de extracción total y por archivo según duración del segmento:
 |   30 s   |      19.77       |    918    |   21.54    |
 |   50 s   |      15.73       |    448    |   35.11    |
 
-![Extracción por duración](graficas/tiempo_extraction_duracion.png)
+![Extracción por duración](./graficas/tiempo_extraction_duracion.png)
 
 ### Tiempos de entrenamiento por duración
 
@@ -146,7 +146,7 @@ Tiempo de entrenamiento (k=10, overlap=0.5) por arquitectura según duración de
 |   30 s   |     59.4     |      67.5      |      60.0       |      0.99      |       1.13       |       1.00        |
 |   50 s   |     53.4     |      54.5      |      48.7       |      0.89      |       0.91       |       0.81        |
 
-![Entrenamiento por duración](graficas/tiempo_training_duracion.png)
+![Entrenamiento por duración](./graficas/tiempo_training_duracion.png)
 
 ### Tiempos de entrenamiento vs k (5 s, overlap=0.5)
 
@@ -162,7 +162,7 @@ Tiempo de entrenamiento por arquitectura para Study 2 (duración fija 5 s), usan
 | 15  |   1455.47    |    3648.21     |     634.33      |     24.26      |      60.80       |       10.57       |
 | 20  |   1757.73    |    5047.27     |     885.41      |     29.30      |      84.12       |       14.76       |
 
-![Entrenamiento vs k](graficas/tiempo_training_k_05seg.png)
+![Entrenamiento vs k](./graficas/tiempo_training_k_05seg.png)
 
 ### Tiempos de entrenamiento vs overlap (5 s, k=10)
 
@@ -175,7 +175,7 @@ Tiempo de entrenamiento por arquitectura para Study 3 (duracion fija 5 s, k=10),
 |   0.5   |   1087.29    |    2489.81     |     535.21      |     18.12      |      41.50       |       8.92        |
 |  0.75   |    104.54    |    2733.12     |     500.67      |      1.74      |      45.55       |       8.34        |
 
-![Entrenamiento vs overlap](graficas/tiempo_training_overlap_05seg.png)
+![Entrenamiento vs overlap](./graficas/tiempo_training_overlap_05seg.png)
 
 ### Tiempos de inferencia por archivo (5 s, k=10, overlap=0.5)
 
@@ -187,4 +187,4 @@ Tiempo de inferencia sobre el conjunto ciego en segmentos de 5 s:
 | ECAPA-TDNN   |      97.03       |   0.107   |   106.50   |
 | Feedforward  |       9.79       |   0.011   |   10.74    |
 
-![Inferencia por archivo](graficas/tiempo_inferencia_archivo_05seg.png)
+![Inferencia por archivo](./graficas/tiempo_inferencia_archivo_05seg.png)

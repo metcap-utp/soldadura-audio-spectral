@@ -253,15 +253,15 @@ Format: `<tipo>: <descripción>`. Types: `Agrega`, `Arregla`, `Organiza`, `Actua
 
 ## Key Files
 
-| File                            | Purpose                        |
-| ------------------------------- | ------------------------------ |
-| `entrenar_xvector.py`           | X-Vector training              |
-| `entrenar_ecapa.py`             | ECAPA-TDNN training            |
-| `entrenar_feedforward.py`       | FeedForward training           |
-| `inferir.py`                    | Inference with ensemble voting |
-| `generar_splits.py`             | Stratified split generation    |
-| `models/modelo_*.py`         | Model architectures            |
-| `utils/audio_utils.py`          | Audio loading utilities        |
+| File                      | Purpose                        |
+| ------------------------- | ------------------------------ |
+| `entrenar_xvector.py`     | X-Vector training              |
+| `entrenar_ecapa.py`       | ECAPA-TDNN training            |
+| `entrenar_feedforward.py` | FeedForward training           |
+| `inferir.py`              | Inference with ensemble voting |
+| `generar_splits.py`       | Stratified split generation    |
+| `models/modelo_*.py`      | Model architectures            |
+| `utils/audio_utils.py`    | Audio loading utilities        |
 
 ## Git Ignore
 
