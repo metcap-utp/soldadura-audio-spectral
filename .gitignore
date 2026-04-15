@@ -41,7 +41,7 @@ dmypy.json
 .pytest_cache/
 .coverage
 htmlcov/
-videos-soldadura/
+videos_soldadura/
 
 # Modelos entrenados
 *.keras
@@ -97,3 +97,5 @@ backups/
 
 *.sh
 *.aux
+
+AGENTS.md
