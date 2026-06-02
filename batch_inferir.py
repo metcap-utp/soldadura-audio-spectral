@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script para ejecutar inferencias en lote (evaluación blind).
+Script para ejecutar inferencias en lote (evaluación test).
 
 Uso:
     python batch_inferir.py

@@ -2907,7 +2907,7 @@
     "fold_training_times_seconds": [
       149.06579184532166
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9418221734357849,
         "f1": 0.9301830745058336
@@ -2984,7 +2984,7 @@
       135.04498410224915,
       69.49511384963989
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9517014270032931,
         "f1": 0.940957159561473
@@ -3081,7 +3081,7 @@
       103.69517874717712,
       82.79210472106934
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.964873765093304,
         "f1": 0.9576950442742054
@@ -3198,7 +3198,7 @@
       123.80792784690857,
       100.53268623352051
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.964873765093304,
         "f1": 0.9568397534570896
@@ -3395,7 +3395,7 @@
       111.27593088150024,
       78.02137041091919
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9681668496158068,
         "f1": 0.9609888350146706
@@ -3642,7 +3642,7 @@
       88.6907320022583,
       86.95963978767395
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9659714599341384,
         "f1": 0.9587115098820455
@@ -42265,7 +42265,7 @@
     "fold_training_times_seconds": [
       48.736855268478394
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9363336992316136,
         "f1": 0.9252503710724734
@@ -42336,7 +42336,7 @@
       53.206260442733765,
       49.338621854782104
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9429198682766191,
         "f1": 0.9328883841291079
@@ -42423,7 +42423,7 @@
       61.00080418586731,
       43.481772899627686
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9429198682766191,
         "f1": 0.9331468065024128
@@ -42526,7 +42526,7 @@
       50.4985613822937,
       46.60186767578125
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9429198682766191,
         "f1": 0.9326933732694181
@@ -42693,7 +42693,7 @@
       62.5410430431366,
       48.955610275268555
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9473106476399561,
         "f1": 0.9378845664886856
@@ -42900,7 +42900,7 @@
       40.51021075248718,
       41.311301708221436
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9517014270032931,
         "f1": 0.9434059630850263
@@ -43027,7 +43027,7 @@
       55.23277449607849,
       44.81904697418213
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.5729967069154775,
         "f1": 0.5857677254150385
@@ -43154,7 +43154,7 @@
       51.13480043411255,
       42.629650592803955
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.7102085620197585,
         "f1": 0.7095233703684626
@@ -43281,7 +43281,7 @@
       45.66062641143799,
       27.43416476249695
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9396267837541163,
         "f1": 0.9304946594923771
@@ -43408,7 +43408,7 @@
       45.64912939071655,
       44.78580641746521
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9517014270032931,
         "f1": 0.943196899535617
@@ -90833,7 +90833,7 @@
         "accuracy_current": 0.9950460014154282
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9363336992316136,
         "f1": 0.9252503710724734
@@ -90909,7 +90909,7 @@
         "accuracy_current": 0.9967506092607636
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9429198682766191,
         "f1": 0.9328883841291079
@@ -91001,7 +91001,7 @@
         "accuracy_current": 0.9945092656142759
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9429198682766191,
         "f1": 0.9331468065024128
@@ -91109,7 +91109,7 @@
         "accuracy_current": 1.0
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9429198682766191,
         "f1": 0.9326933732694181
@@ -91281,7 +91281,7 @@
         "accuracy_current": 0.9921568627450981
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9473106476399561,
         "f1": 0.9378845664886856
@@ -91493,7 +91493,7 @@
         "accuracy_current": 1.0
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9517014270032931,
         "f1": 0.9434059630850263
@@ -91625,7 +91625,7 @@
         "accuracy_current": 0.8122827346465817
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.5729967069154775,
         "f1": 0.5857677254150385
@@ -91757,7 +91757,7 @@
         "accuracy_current": 0.8783314020857474
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.7102085620197585,
         "f1": 0.7095233703684626
@@ -91889,7 +91889,7 @@
         "accuracy_current": 0.984936268829664
       }
     ],
-    "blind_evaluation": {
+    "test_evaluation": {
       "plate": {
         "accuracy": 0.9396267837541163,
         "f1": 0.9304946594923771

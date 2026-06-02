@@ -1,12 +1,12 @@
 """
-Generación de splits estratificados para entrenamiento, test y blind.
+Generación de splits estratificados para entrenamiento, validación y test.
 
 Adaptado de vggish-backbone/generar_splits.py para usar MFCC.
 
 Crea conjuntos:
 - train.csv: 72% de los datos
-- test.csv: 18% de los datos  
-- blind.csv: 10% de los datos (evaluación ciega)
+- validation.csv: 18% de los datos  
+- test.csv: 10% de los datos (evaluación final)
 
 Los splits son estratificados por sesión para evitar data leakage.
 
@@ -33,8 +33,8 @@ from utils.timing import Timer, timer
 
 
 RANDOM_SEED = 42
-BLIND_FRACTION = 0.10  # 10% para evaluación ciega
-TEST_FRACTION = 0.18   # 18% para test
+TEST_FRACTION = 0.10  # 10% para evaluación final
+VAL_FRACTION = 0.18   # 18% para validación
 TRAIN_FRACTION = 0.72  # 72% para entrenamiento
 
 
@@ -80,37 +80,37 @@ def create_session_based_split(audio_files: list, seed: int = RANDOM_SEED):
     
     session_names = list(sessions.keys())
     
-    # Split sesiones: 10% blind, 18% test, 72% train
-    # Primero separar blind (10%)
-    trainval_sessions, blind_sessions = train_test_split(
+    # Split sesiones: 10% test, 18% validation, 72% train
+    # Primero separar test (10%)
+    trainval_sessions, test_sessions = train_test_split(
         session_names,
-        test_size=BLIND_FRACTION,
+        test_size=TEST_FRACTION,
         random_state=seed,
     )
     
-    # Luego separar test de train (18% del total = 20% de 90% restante)
-    test_fraction_of_remaining = TEST_FRACTION / (1 - BLIND_FRACTION)
-    train_sessions, test_sessions = train_test_split(
+    # Luego separar validación de train (18% del total = 20% de 90% restante)
+    val_fraction_of_remaining = VAL_FRACTION / (1 - TEST_FRACTION)
+    train_sessions, val_sessions = train_test_split(
         trainval_sessions,
-        test_size=test_fraction_of_remaining,
+        test_size=val_fraction_of_remaining,
         random_state=seed,
     )
     
     # Crear listas de archivos
     train_files = []
+    val_files = []
     test_files = []
-    blind_files = []
     
     for session in train_sessions:
         train_files.extend(sessions[session])
     
+    for session in val_sessions:
+        val_files.extend(sessions[session])
+    
     for session in test_sessions:
         test_files.extend(sessions[session])
     
-    for session in blind_sessions:
-        blind_files.extend(sessions[session])
-    
-    return train_files, test_files, blind_files
+    return train_files, val_files, test_files
 
 
 def generate_segment_csv(audio_files: list, segment_duration: float, overlap_ratio: float):
@@ -196,43 +196,43 @@ def main():
     # Crear splits por sesión
     print("\nCreando splits estratificados por sesión...")
     with Timer("Creación splits"):
-        train_files, test_files, blind_files = create_session_based_split(audio_files, seed)
+        train_files, val_files, test_files = create_session_based_split(audio_files, seed)
 
     print(f"\nSesiones:")
     print(f"  Train: {len(set(f['sesion'] for f in train_files))} sesiones, {len(train_files)} archivos")
+    print(f"  Validation: {len(set(f['sesion'] for f in val_files))} sesiones, {len(val_files)} archivos")
     print(f"  Test: {len(set(f['sesion'] for f in test_files))} sesiones, {len(test_files)} archivos")
-    print(f"  Blind: {len(set(f['sesion'] for f in blind_files))} sesiones, {len(blind_files)} archivos")
 
     # Generar CSVs con segmentos
     print(f"\nGenerando CSVs con segmentos (duración={duration}s, overlap={overlap})...")
 
     with Timer("Generación CSV Train"):
         train_df = generate_segment_csv(train_files, float(duration), overlap)
+    with Timer("Generación CSV Validation"):
+        val_df = generate_segment_csv(val_files, float(duration), overlap)
     with Timer("Generación CSV Test"):
         test_df = generate_segment_csv(test_files, float(duration), overlap)
-    with Timer("Generación CSV Blind"):
-        blind_df = generate_segment_csv(blind_files, float(duration), overlap)
     
     # Guardar CSVs
     train_path = duration_dir / "train.csv"
+    val_path = duration_dir / "validation.csv"
     test_path = duration_dir / "test.csv"
-    blind_path = duration_dir / "blind.csv"
     
     train_df.to_csv(train_path, index=False)
+    val_df.to_csv(val_path, index=False)
     test_df.to_csv(test_path, index=False)
-    blind_df.to_csv(blind_path, index=False)
     
     print(f"\nCSVs guardados:")
     print(f"  Train: {train_path} ({len(train_df)} segmentos)")
+    print(f"  Validation: {val_path} ({len(val_df)} segmentos)")
     print(f"  Test: {test_path} ({len(test_df)} segmentos)")
-    print(f"  Blind: {blind_path} ({len(blind_df)} segmentos)")
     
     # Calcular y guardar estadísticas
     print("\nCalculando estadísticas...")
     
     train_stats = compute_data_stats(train_df)
+    val_stats = compute_data_stats(val_df)
     test_stats = compute_data_stats(test_df)
-    blind_stats = compute_data_stats(blind_df)
     
     total_time = time.time() - total_start
 
@@ -245,8 +245,8 @@ def main():
             'total_minutes': total_time / 60,
         },
         'train': train_stats,
+        'validation': val_stats,
         'test': test_stats,
-        'blind': blind_stats,
     }
 
     stats_path = duration_dir / "data_stats.json"
@@ -257,7 +257,7 @@ def main():
     print(f"\nEstadísticas guardadas: {stats_path}")
 
     # Crear CSV completo
-    complete_df = pd.concat([train_df, test_df, blind_df], ignore_index=True)
+    complete_df = pd.concat([train_df, val_df, test_df], ignore_index=True)
     complete_path = duration_dir / "completo.csv"
     complete_df.to_csv(complete_path, index=False)
     print(f"CSV completo: {complete_path} ({len(complete_df)} segmentos)")

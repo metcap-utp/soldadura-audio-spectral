@@ -82,9 +82,9 @@ def migrate_spectral_result(old_entry):
     if "config" in old_entry:
         new_entry["config"] = old_entry["config"]
     
-    # Renombrar blind_evaluation → ensemble_results
-    if "blind_evaluation" in old_entry:
-        be = old_entry["blind_evaluation"]
+    # Renombrar test_evaluation → ensemble_results
+    if "test_evaluation" in old_entry:
+        be = old_entry["test_evaluation"]
         ensemble_results = {}
         
         # Mapear tasks directamente
@@ -248,11 +248,11 @@ def main():
     args = parser.parse_args()
     
     if args.project == "vggish":
-        base_dir = Path("/home/luis/projects/vggish-backbone")
+        base_dir = Path("/home/luis/projects/tesis/vggish")
     elif args.project == "yamnet":
-        base_dir = Path("/home/luis/projects/yamnet-backbone")
+        base_dir = Path("/home/luis/projects/tesis/yamnet")
     else:
-        base_dir = Path("/home/luis/projects/spectral-analysis")
+        base_dir = Path("/home/luis/projects/tesis/spectral-analysis")
     
     print(f"\n{'='*60}")
     print(f"Migración de JSON - Proyecto: {args.project}")

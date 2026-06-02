@@ -22,27 +22,7 @@
       "AC": 470
     }
   },
-  "test": {
-    "total_samples": 278,
-    "unique_sessions": 67,
-    "unique_audio_files": 67,
-    "plate_distribution": {
-      "Placa_6mm": 109,
-      "Placa_3mm": 97,
-      "Placa_12mm": 72
-    },
-    "electrode_distribution": {
-      "E6011": 124,
-      "E6013": 81,
-      "E6010": 41,
-      "E7018": 32
-    },
-    "current_distribution": {
-      "DC": 167,
-      "AC": 111
-    }
-  },
-  "blind": {
+  "validation": {
     "total_samples": 186,
     "unique_sessions": 38,
     "unique_audio_files": 38,

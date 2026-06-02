@@ -253,7 +253,7 @@ Audio: |----seg0----|----seg1----|----seg2----|
 
 ### Splits por Sesión
 
-Para evitar data leakage, todos los segmentos de una misma sesión van al mismo conjunto (train/test/blind). Esto garantiza evaluación realista.
+Para evitar data leakage, todos los segmentos de una misma sesión van al mismo conjunto (train/test/test). Esto garantiza evaluación realista.
 
 ---
 

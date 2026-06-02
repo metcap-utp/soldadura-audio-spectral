@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Inferencia con ensemble voting - Evaluación en conjunto blind.
+Inferencia con ensemble voting - Evaluación en conjunto test.
 
 Genera inferencia.json con métricas completas y matrices de confusión.
 
@@ -31,7 +31,7 @@ N_MFCC = 40
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Inferencia SMAW - Evaluación blind")
+    parser = argparse.ArgumentParser(description="Inferencia SMAW - Evaluación test")
     parser.add_argument("--duration", type=int, required=True)
     parser.add_argument("--overlap", type=float, default=0.5)
     parser.add_argument("--k-folds", type=int, default=10)
@@ -325,73 +325,74 @@ def run_inference(duration, overlap, k_folds, model_type, device):
 
     if cached_data:
         print(f"Usando caché existente...")
-        y_blind = cached_data["y_blind"]
+        # Cache schema legacy: X_test=validación, X_blind=test real
         y_train = cached_data["y_train"]
-        y_test = cached_data["y_test"]
-        features = cached_data["X_blind"]
+        y_val = cached_data.get("y_val", cached_data.get("y_test"))
+        y_test = cached_data.get("y_blind", cached_data.get("y_test"))
+        features = cached_data.get("X_blind", cached_data.get("X_test"))
 
         le_plate = LabelEncoder()
         le_electrode = LabelEncoder()
         le_current = LabelEncoder()
 
         all_plate = np.concatenate(
-            [y_train["plate"], y_test["plate"], y_blind["plate"]]
+            [y_train["plate"], y_val["plate"], y_test["plate"]]
         )
         all_electrode = np.concatenate(
-            [y_train["electrode"], y_test["electrode"], y_blind["electrode"]]
+            [y_train["electrode"], y_val["electrode"], y_test["electrode"]]
         )
         all_current = np.concatenate(
-            [y_train["current"], y_test["current"], y_blind["current"]]
+            [y_train["current"], y_val["current"], y_test["current"]]
         )
 
         le_plate.fit(all_plate)
         le_electrode.fit(all_electrode)
         le_current.fit(all_current)
 
-        y_true_plate = le_plate.transform(y_blind["plate"])
-        y_true_electrode = le_electrode.transform(y_blind["electrode"])
-        y_true_current = le_current.transform(y_blind["current"])
+        y_true_plate = le_plate.transform(y_test["plate"])
+        y_true_electrode = le_electrode.transform(y_test["electrode"])
+        y_true_current = le_current.transform(y_test["current"])
 
         n_samples = len(y_true_plate)
-        print(f"Muestras blind: {n_samples}")
+        print(f"Muestras test: {n_samples}")
     else:
         print("Extrayendo features desde CSVs...")
-        blind_csv = duration_dir / "blind.csv"
-        train_csv = duration_dir / "train.csv"
         test_csv = duration_dir / "test.csv"
+        train_csv = duration_dir / "train.csv"
+        val_csv = duration_dir / "validation.csv"
 
-        blind_df = pd.read_csv(blind_csv)
-        train_df = pd.read_csv(train_csv)
         test_df = pd.read_csv(test_csv)
+        train_df = pd.read_csv(train_csv)
+        val_df = pd.read_csv(val_csv)
 
         le_plate = LabelEncoder()
         le_electrode = LabelEncoder()
         le_current = LabelEncoder()
 
         all_plate = np.concatenate(
-            [train_df["placa"], test_df["placa"], blind_df["placa"]]
+            [train_df["placa"], val_df["placa"], test_df["placa"]]
         )
         all_electrode = np.concatenate(
-            [train_df["electrodo"], test_df["electrodo"], blind_df["electrodo"]]
+            [train_df["electrodo"], val_df["electrodo"], test_df["electrodo"]]
         )
         all_current = np.concatenate(
-            [train_df["corriente"], test_df["corriente"], blind_df["corriente"]]
+            [train_df["corriente"], val_df["corriente"], test_df["corriente"]]
         )
 
         le_plate.fit(all_plate)
         le_electrode.fit(all_electrode)
         le_current.fit(all_current)
 
-        y_true_plate = le_plate.transform(blind_df["placa"])
-        y_true_electrode = le_electrode.transform(blind_df["electrodo"])
-        y_true_current = le_current.transform(blind_df["corriente"])
+        y_true_plate = le_plate.transform(test_df["placa"])
+        y_true_electrode = le_electrode.transform(test_df["electrodo"])
+        y_true_current = le_current.transform(test_df["corriente"])
 
         n_samples = len(y_true_plate)
-        print(f"Muestras blind: {n_samples}")
+        print(f"Muestras test: {n_samples}")
 
         with Timer("Extracción de features"):
             features = extract_features_for_model(
-                blind_df, model_type, duration, overlap
+                test_df, model_type, duration, overlap
             )
 
     with Timer("Carga de modelos"):
@@ -404,15 +405,41 @@ def run_inference(duration, overlap, k_folds, model_type, device):
 
     if not cached_data:
         with Timer("Extracción de features"):
-            blind_df = pd.read_csv(duration_dir / "blind.csv")
+            test_df = pd.read_csv(duration_dir / "test.csv")
             features = extract_features_for_model(
-                blind_df, model_type, duration, overlap
+                test_df, model_type, duration, overlap
             )
 
     with Timer("Predicción ensemble"):
         y_pred_plate, y_pred_electrode, y_pred_current = predict_ensemble(
             models, features, model_type, device
         )
+
+    with Timer("Guardado de predicciones por segmento"):
+        if cached_data:
+            test_df = pd.read_csv(duration_dir / "test.csv")
+
+        predictions_df = pd.DataFrame(
+            {
+                "audio_path": test_df["audio_path"].values,
+                "sesion": test_df["sesion"].values,
+                "segment_index": test_df["segment_index"].values,
+                "placa": test_df["placa"].values,
+                "electrodo": test_df["electrodo"].values,
+                "corriente": test_df["corriente"].values,
+                "true_plate": le_plate.inverse_transform(y_true_plate),
+                "true_electrode": le_electrode.inverse_transform(y_true_electrode),
+                "true_current": le_current.inverse_transform(y_true_current),
+                "pred_plate": le_plate.inverse_transform(y_pred_plate),
+                "pred_electrode": le_electrode.inverse_transform(y_pred_electrode),
+                "pred_current": le_current.inverse_transform(y_pred_current),
+            }
+        )
+        pred_dir = duration_dir / "predicciones"
+        pred_dir.mkdir(parents=True, exist_ok=True)
+        pred_path = pred_dir / f"{model_type}_overlap_{overlap}.csv"
+        predictions_df.to_csv(pred_path, index=False)
+        print(f"  Predicciones por segmento guardadas en: {pred_path}")
 
     with Timer("Evaluación"):
         metrics, confusion_matrices = evaluate_model(

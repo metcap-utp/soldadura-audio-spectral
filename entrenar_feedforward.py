@@ -3,7 +3,7 @@
 Entrenamiento FeedForward para clasificación SMAW (multi-task).
 
 Lee splits desde CSVs, generándolos automáticamente si no existen.
-Evalúa en conjunto blind al finalizar.
+Evalúa en conjunto test al finalizar.
 
 Uso:
     python entrenar_feedforward.py --duration 10 --overlap 0.5 --k-folds 10
@@ -68,18 +68,18 @@ def ensure_csvs_exist(duration, overlap, seed):
 
     # Intentar con nombres específicos de overlap
     train_csv = duration_dir / f"train_overlap_{overlap}.csv"
+    val_csv = duration_dir / f"validation_overlap_{overlap}.csv"
     test_csv = duration_dir / f"test_overlap_{overlap}.csv"
-    blind_csv = duration_dir / f"blind_overlap_{overlap}.csv"
 
     # Si no existen, usar nombres genéricos
     if not train_csv.exists():
         train_csv = duration_dir / "train.csv"
+    if not val_csv.exists():
+        val_csv = duration_dir / "validation.csv"
     if not test_csv.exists():
         test_csv = duration_dir / "test.csv"
-    if not blind_csv.exists():
-        blind_csv = duration_dir / "blind.csv"
 
-    if not train_csv.exists() or not test_csv.exists() or not blind_csv.exists():
+    if not train_csv.exists() or not val_csv.exists() or not test_csv.exists():
         print(f"CSVs no encontrados. Generando con generar_splits.py...")
         print(f"  Duración: {duration}s, Overlap: {overlap}, Seed: {seed}")
 
@@ -106,7 +106,7 @@ def ensure_csvs_exist(duration, overlap, seed):
     else:
         print(f"  [CACHE] Usando CSVs existentes")
 
-    return train_csv, test_csv, blind_csv
+    return train_csv, val_csv, test_csv
 
 
 def load_segments_from_csv(df, duration, overlap):
@@ -155,7 +155,7 @@ def load_segments_from_csv(df, duration, overlap):
 
 
 def extract_features_from_csv(
-    train_csv, test_csv, blind_csv, duration, overlap, cache_path
+    train_csv, val_csv, test_csv, duration, overlap, cache_path
 ):
     """Extrae features de los CSVs."""
     if cache_path.exists():
@@ -165,38 +165,38 @@ def extract_features_from_csv(
             data["X_train"],
             data["y_train"],
             data["sessions_train"],
+            data["X_val"],
+            data["y_val"],
+            data["sessions_val"],
             data["X_test"],
             data["y_test"],
             data["sessions_test"],
-            data["X_blind"],
-            data["y_blind"],
-            data["sessions_blind"],
         )
 
     # Cargar CSVs
     print(f"Cargando CSVs...")
     train_df = pd.read_csv(train_csv)
+    val_df = pd.read_csv(val_csv)
     test_df = pd.read_csv(test_csv)
-    blind_df = pd.read_csv(blind_csv)
 
     print(f"  Train: {len(train_df)} segmentos")
+    print(f"  Validation: {len(val_df)} segmentos")
     print(f"  Test: {len(test_df)} segmentos")
-    print(f"  Blind: {len(blind_df)} segmentos")
 
     # Extraer features
     print(f"\nExtrayendo MFCC de train...")
     X_train = load_segments_from_csv(train_df, duration, overlap)
 
     print(f"Extrayendo MFCC de test...")
-    X_test = load_segments_from_csv(test_df, duration, overlap)
+    X_val = load_segments_from_csv(val_df, duration, overlap)
 
-    print(f"Extrayendo MFCC de blind...")
-    X_blind = load_segments_from_csv(blind_df, duration, overlap)
+    print(f"Extrayendo MFCC de test...")
+    X_test = load_segments_from_csv(test_df, duration, overlap)
 
     # Preparar labels y sessions
     sessions_train = train_df["sesion"].values
+    sessions_val = val_df["sesion"].values
     sessions_test = test_df["sesion"].values
-    sessions_blind = blind_df["sesion"].values
 
     y_train = {
         "plate": train_df["placa"].values,
@@ -204,16 +204,16 @@ def extract_features_from_csv(
         "current": train_df["corriente"].values,
     }
 
+    y_val = {
+        "plate": val_df["placa"].values,
+        "electrode": val_df["electrodo"].values,
+        "current": val_df["corriente"].values,
+    }
+
     y_test = {
         "plate": test_df["placa"].values,
         "electrode": test_df["electrodo"].values,
         "current": test_df["corriente"].values,
-    }
-
-    y_blind = {
-        "plate": blind_df["placa"].values,
-        "electrode": blind_df["electrodo"].values,
-        "current": blind_df["corriente"].values,
     }
 
     # Guardar cache
@@ -223,12 +223,12 @@ def extract_features_from_csv(
             "X_train": X_train,
             "y_train": y_train,
             "sessions_train": sessions_train,
+            "X_val": X_val,
+            "y_val": y_val,
+            "sessions_val": sessions_val,
             "X_test": X_test,
             "y_test": y_test,
             "sessions_test": sessions_test,
-            "X_blind": X_blind,
-            "y_blind": y_blind,
-            "sessions_blind": sessions_blind,
         },
         cache_path,
     )
@@ -238,12 +238,12 @@ def extract_features_from_csv(
         X_train,
         y_train,
         sessions_train,
+        X_val,
+        y_val,
+        sessions_val,
         X_test,
         y_test,
         sessions_test,
-        X_blind,
-        y_blind,
-        sessions_blind,
     )
 
 
@@ -336,15 +336,15 @@ def train_model(model, train_loader, val_loader, device):
     )
 
 
-def evaluate_blind(
-    models, X_blind, y_blind, le_plate, le_electrode, le_current, device
+def evaluate_test(
+    models, X_test, y_test, le_plate, le_electrode, le_current, device
 ):
-    """Evalúa el ensemble en el conjunto blind."""
+    """Evalúa el ensemble en el conjunto test."""
     print("\n" + "=" * 60)
     print("EVALUACIÓN EN CONJUNTO BLIND")
     print("=" * 60)
 
-    X_tensor = torch.FloatTensor(X_blind).to(device)
+    X_tensor = torch.FloatTensor(X_test).to(device)
 
     # Soft voting
     all_logits_plate = []
@@ -363,9 +363,9 @@ def evaluate_blind(
     avg_electrode = np.mean(all_logits_electrode, axis=0).argmax(axis=1)
     avg_current = np.mean(all_logits_current, axis=0).argmax(axis=1)
 
-    y_true_plate = le_plate.transform(y_blind["plate"])
-    y_true_electrode = le_electrode.transform(y_blind["electrode"])
-    y_true_current = le_current.transform(y_blind["current"])
+    y_true_plate = le_plate.transform(y_test["plate"])
+    y_true_electrode = le_electrode.transform(y_test["electrode"])
+    y_true_current = le_current.transform(y_test["current"])
 
     results = {
         "plate": {
@@ -402,7 +402,7 @@ def evaluate_blind(
         "hamming_accuracy": float(hamming_accuracy),
     }
 
-    print(f"\nResultados Blind (Ensemble de {len(models)} modelos):")
+    print(f"\nResultados Test (Ensemble de {len(models)} modelos):")
     for task, metrics in results.items():
         if task == "global":
             print(
@@ -457,7 +457,7 @@ def main():
 
     # Asegurar que existan CSVs
     print("\nVerificando CSVs...")
-    train_csv, test_csv, blind_csv = ensure_csvs_exist(
+    train_csv, val_csv, test_csv = ensure_csvs_exist(
         args.duration, args.overlap, args.seed
     )
 
@@ -468,31 +468,31 @@ def main():
             X_train,
             y_train,
             sessions_train,
+            X_val,
+            y_val,
+            sessions_val,
             X_test,
             y_test,
             sessions_test,
-            X_blind,
-            y_blind,
-            sessions_blind,
         ) = extract_features_from_csv(
-            train_csv, test_csv, blind_csv, args.duration, args.overlap, cache_path
+            train_csv, val_csv, test_csv, args.duration, args.overlap, cache_path
         )
     feature_extraction_time = get_extraction_time().seconds
 
     # Combinar train+test para K-Fold CV
-    X_all = np.vstack([X_train, X_test])
+    X_all = np.vstack([X_train, X_val])
     y_all = {
         "plate": np.concatenate(
-            [np.array(y_train["plate"]), np.array(y_test["plate"])]
+            [np.array(y_train["plate"]), np.array(y_val["plate"])]
         ),
         "electrode": np.concatenate(
-            [np.array(y_train["electrode"]), np.array(y_test["electrode"])]
+            [np.array(y_train["electrode"]), np.array(y_val["electrode"])]
         ),
         "current": np.concatenate(
-            [np.array(y_train["current"]), np.array(y_test["current"])]
+            [np.array(y_train["current"]), np.array(y_val["current"])]
         ),
     }
-    sessions_all = np.concatenate([np.array(sessions_train), np.array(sessions_test)])
+    sessions_all = np.concatenate([np.array(sessions_train), np.array(sessions_val)])
 
     # Codificar labels
     le_plate = LabelEncoder()
@@ -626,9 +626,9 @@ def main():
             )
             sys.exit(0)
 
-    # Evaluar en blind
-    blind_results = evaluate_blind(
-        trained_models, X_blind, y_blind, le_plate, le_electrode, le_current, device
+    # Evaluar en test
+    test_results = evaluate_test(
+        trained_models, X_test, y_test, le_plate, le_electrode, le_current, device
     )
 
     # Calcular tiempos
@@ -666,7 +666,7 @@ def main():
         },
         "fold_training_times_seconds": fold_training_times_seconds,
         "fold_results": fold_results,
-        "blind_evaluation": blind_results,
+        "test_evaluation": test_results,
         "pause_resume": {
             "was_paused": ckpt_state.get("was_paused", False),
             "pause_count": _pause_count,
